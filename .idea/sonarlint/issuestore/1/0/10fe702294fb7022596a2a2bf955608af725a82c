@@ -1,0 +1,14 @@
+
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(±çƒÀùÿÿÿÿ
+[
+java:S22590"EA "NullPointerException" could be thrown; "minNode" is nullable here.(ô®’Î
+`
+java:S2259;"EA "NullPointerException" could be thrown; "maxNode" is nullable here.(öùä”úÿÿÿÿ
+@	java:S106A"+Replace this use of System.out by a logger.(‘êòÙ
+@	java:S106S"+Replace this use of System.out by a logger.(ÜŠƒ“
+@	java:S106V"+Replace this use of System.out by a logger.(áæŽ®
+E	java:S106W"+Replace this use of System.out by a logger.(ÙÆ¿÷üÿÿÿÿ
+F
+java:S1128"1Remove this unused import 'java.util.LinkedList'.(»Äð1
+B
+java:S1128",Remove this unused import 'java.util.Queue'.(Äá™ô

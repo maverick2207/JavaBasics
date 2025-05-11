@@ -1,0 +1,15 @@
+
+{	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ßçÔ¶úÿÿÿÿ8‘µ‡„ë2
+L	java:S106"+Replace this use of System.out by a logger.(ã‡†ğúÿÿÿÿ8­µ‡„ë2
+L	java:S106"+Replace this use of System.out by a logger.(ã¿¢Ôùÿÿÿÿ8°µ‡„ë2
+L	java:S106"+Replace this use of System.out by a logger.(óñû®şÿÿÿÿ8°µ‡„ë2
+G	java:S106!"+Replace this use of System.out by a logger.(Ç×Â8±µ‡„ë2
+L	java:S106%"+Replace this use of System.out by a logger.(µÌÏşÿÿÿÿ8²µ‡„ë2
+P
+java:S22014".The return value of "startsWith" must be used.(°ıƒ£øÿÿÿÿ8²µ‡„ë2
+G	java:S1068"+Replace this use of System.out by a logger.(Áß‡Ü8´µ‡„ë2
+]
+java:S1612<"@Replace this lambda with method reference 'System.out::println'.(ú‹àô8·µ‡„ë2
+G	java:S106<"+Replace this use of System.out by a logger.(ú‹àô8¸µ‡„ë2
+O
+java:S1128"-Remove this unused import 'java.util.Arrays'.(î–˜Éüÿÿÿÿ8¸µ‡„ë2
