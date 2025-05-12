@@ -1,27 +1,11 @@
 
-N
-src/Streams/StreamFilters.java,b\3\b3ef9d2ffea9a061904601cdf52fca62118f8ac5
-p
-@src/data_structure_basics/BinarySearchTree/BinarySearchTree.java,9\2\928c359480fb8612dd4e9f05661620aace1db16c
-r
-Bsrc/data_structure_basics/BinarySearchTree/FindMinimumElement.java,1\0\10fe702294fb7022596a2a2bf955608af725a82c
-c
-3src/data_structure_basics/recurssion/Factorial.java,1\2\12c4b42ca7f2e04a2deebac5f056942e9cbea4ae
-t
-Dsrc/data_structure_basics/time_complexity/MultiNumberEquationON.java,6\7\67cd199ad181d2bde6dda2fa054e6cda007ac004
-u
-Esrc/data_structure_basics/time_complexity/MultiNumberEquationON2.java,3\d\3de794fb9fb38531efdaebc2ce04ee5819ba570f
-u
-Esrc/data_structure_basics/time_complexity/MultiNumberEquationON3.java,c\6\c64eb21c13310b71218b04ad2b1ddd221f86b9d9
-d
-4src/data_structure_basics/stack/LinkedListStack.java,0\2\020aab01e0854ef5c2cb64f73258603e7307576d
-q
-Asrc/data_structure_basics/searching/BinarySearchIterativeWay.java,0\5\059616d7b9aa70f6a50dceacc41dc080bc6e5342
-o
-?src/data_structure_basics/searching/BinarySearchReccursive.java,6\1\61ed6bf441d2efb72691944e190ff4ec2b0bc9ef
-N
-src/Streams/StreamForEach.java,a\a\aa392aaf66b83609de390778b27e527df72cceda
+9
+	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 J
 src/Streams/StreamMap.java,6\7\6749408dc59cf2bff1a06444dd7e1883d42b50c5
+N
+src/Streams/StreamForEach.java,a\a\aa392aaf66b83609de390778b27e527df72cceda
+N
+src/Streams/StreamFilters.java,b\3\b3ef9d2ffea9a061904601cdf52fca62118f8ac5
 P
  src/Streams/StreamCollector.java,e\0\e0b90949295585dc0eb8d3dba27824c0494a411e

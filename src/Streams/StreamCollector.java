@@ -41,9 +41,12 @@ public class StreamCollector {
 
         System.out.println("");
 
-        
+
+
         System.out.print("Printing element at 3rd index: ");
 
         numbers.stream().sorted().distinct().skip(3).findFirst().ifPresent(System.out::print);
+
+        System.out.println("git test");
     }
 }
