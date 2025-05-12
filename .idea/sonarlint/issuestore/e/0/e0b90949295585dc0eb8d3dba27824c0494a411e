@@ -9,7 +9,7 @@ X	java:S125 "<This block of commented-out lines of code should be removed.(Çâë
 ]	java:S125#"<This block of commented-out lines of code should be removed.(íÿûîÿÿÿÿÿ8Ãşİöë2
 L	java:S106&"+Replace this use of System.out by a logger.(Ëåäùıÿÿÿÿ8Äşİöë2
 L	java:S106*"+Replace this use of System.out by a logger.(ŞÒ—üÿÿÿÿ8Äşİöë2
-L	java:S106+"+Replace this use of System.out by a logger.(ô¥âûÿÿÿÿ8Åÿàöë2
-L	java:S106-"+Replace this use of System.out by a logger.(‚Û×ûúÿÿÿÿ8¬¢‹÷ë2
+L	java:S106-"+Replace this use of System.out by a logger.(ô¥âûÿÿÿÿ8Åÿàöë2
+L	java:S106/"+Replace this use of System.out by a logger.(‚Û×ûúÿÿÿÿ8¬¢‹÷ë2
 J
 java:S1128".Remove this unused import 'java.util.HashSet'.(Ê‚êX8Åşİöë2
