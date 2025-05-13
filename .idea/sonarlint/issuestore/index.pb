@@ -14,10 +14,3 @@ G.idea/sonarlint/issuestore/e/0/e0b90949295585dc0eb8d3dba27824c0494a411e,e\f\ef
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-:
-
-.classpath,3\5\354079a72b91a4280407c16a36f47d1986fd85a5
-8
-.project,f\8\f8b41ce76d7b80d2b47e91b5f92c15f00eccf187
-T
-$.settings/org.eclipse.jdt.core.prefs,2\8\28e4a2e57ea1412e35cd955351520c20c1e52c43
