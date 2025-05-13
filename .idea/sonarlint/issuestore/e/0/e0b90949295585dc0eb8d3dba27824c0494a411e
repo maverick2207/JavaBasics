@@ -1,16 +1,17 @@
 
-{	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ßçÔ¶úÿÿÿÿ8€ëÅ¦ì2
-o
-java:S6204"RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(µÏ‰·8‹ëÅ¦ì2
-G	java:S106"+Replace this use of System.out by a logger.(Ì¸Û§8ŒëÅ¦ì2
-]	java:S125"<This block of commented-out lines of code should be removed.(ìçƒúÿÿÿÿ8ëÅ¦ì2
-X	java:S125"<This block of commented-out lines of code should be removed.(Ð¶¥Â8ëÅ¦ì2
-X	java:S125 "<This block of commented-out lines of code should be removed.(Çâëœ8ëÅ¦ì2
-]	java:S125#"<This block of commented-out lines of code should be removed.(íÿûîÿÿÿÿÿ8ëÅ¦ì2
-L	java:S106&"+Replace this use of System.out by a logger.(Ëåäùýÿÿÿÿ8ŽëÅ¦ì2
-L	java:S106*"+Replace this use of System.out by a logger.(ÞžÒ—üÿÿÿÿ8ŽëÅ¦ì2
-L	java:S106,"+Replace this use of System.out by a logger.(ô¥âûÿÿÿÿ8ŽëÅ¦ì2
-L	java:S106."+Replace this use of System.out by a logger.(‚Û×ûúÿÿÿÿ8ŽëÅ¦ì2
-L	java:S1060"+Replace this use of System.out by a logger.(ÿøØ¿øÿÿÿÿ8ëÅ¦ì2
-J
-java:S1128".Remove this unused import 'java.util.HashSet'.(Ê‚êX8ëÅ¦ì2
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ßçÔ¶úÿÿÿÿ
+h
+java:S6204"RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(µÏ‰·
+@	java:S106"+Replace this use of System.out by a logger.(Ì¸Û§
+V	java:S125"<This block of commented-out lines of code should be removed.(ìçƒúÿÿÿÿ
+Q	java:S125"<This block of commented-out lines of code should be removed.(Ð¶¥Â
+Q	java:S125 "<This block of commented-out lines of code should be removed.(Çâëœ
+V	java:S125#"<This block of commented-out lines of code should be removed.(íÿûîÿÿÿÿÿ
+E	java:S106&"+Replace this use of System.out by a logger.(Ëåäùýÿÿÿÿ
+E	java:S106*"+Replace this use of System.out by a logger.(ÞžÒ—üÿÿÿÿ
+E	java:S106,"+Replace this use of System.out by a logger.(ô¥âûÿÿÿÿ
+E	java:S106."+Replace this use of System.out by a logger.(‚Û×ûúÿÿÿÿ
+E	java:S1060"+Replace this use of System.out by a logger.(ÿøØ¿øÿÿÿÿ
+G	java:S1062"+Replace this use of System.out by a logger.(øíÅ¡8ÓéÒ¼ì2
+C
+java:S1128".Remove this unused import 'java.util.HashSet'.(Ê‚êX
