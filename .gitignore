@@ -5,6 +5,7 @@
 
 # Ignore directories
 .idea/
+.idea/sonarlint/
 #node_modules/
 #build/
 #temp/
