@@ -12,6 +12,7 @@
 #out/
 
 # Ignore files with a specific extension
+*.iml
 
 #*.log
 #*.temp
