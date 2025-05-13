@@ -1,0 +1,26 @@
+# Ignore specific files
+#my_sensitive_data.txt
+#config.js
+#.DS_Store  # macOS specific files
+
+# Ignore directories
+.idea/
+#node_modules/
+#build/
+#temp/
+#out/
+
+# Ignore files with a specific extension
+
+#*.log
+#*.temp
+#*.swp
+
+# Ignore files in a specific directory, but not the directory itself
+#/logs/*.log
+
+# Ignore a file, but not in a specific subdirectory
+#!/src/keep_this.txt
+
+# Comments start with a '#'
+# This is a comment
