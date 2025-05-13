@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+<<<<<<< HEAD
+  <component name="EclipseModuleManager">
+    <libelement value="jar://D:/Selenium-Java/Selenium Jar/selenium-server-standalone-3.141.59.jar!/" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+=======
   <component name="NewModuleRootManager" inherit-compiler-output="true">
+>>>>>>> origin
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="openjdk-21" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+<<<<<<< HEAD
+    <orderEntry type="module-library">
+      <library name="selenium-server-standalone-3.141.59.jar">
+        <CLASSES>
+          <root url="jar://D:/Selenium-Java/Selenium Jar/selenium-server-standalone-3.141.59.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="b09bf5b1-2d1d-4838-a5c9-3cc5b955e5c9" />
+=======
   </component>
   <component name="SonarLintModuleSettings">
     <option name="uniqueId" value="944b71f3-0586-43ee-914c-f1cab1eec178" />
+>>>>>>> origin
   </component>
 </module>
