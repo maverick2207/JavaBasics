@@ -4,7 +4,7 @@
 #.DS_Store  # macOS specific files
 
 # Ignore directories
-.idea
+.idea/
 #node_modules/
 #build/
 #temp/

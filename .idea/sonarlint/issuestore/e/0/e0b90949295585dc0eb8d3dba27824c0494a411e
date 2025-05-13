@@ -9,8 +9,15 @@ Q	java:S125 "<This block of commented-out lines of code should be removed.(«‚Î
 V	java:S125#"<This block of commented-out lines of code should be removed.(Ìˇ˚Óˇˇˇˇˇ
 E	java:S106&"+Replace this use of System.out by a logger.(ÀÂ‰˘˝ˇˇˇˇ
 E	java:S106*"+Replace this use of System.out by a logger.(ﬁû“ó¸ˇˇˇˇ
+<<<<<<< HEAD
 L	java:S106,"+Replace this use of System.out by a logger.(Ù•Å‚˚ˇˇˇˇ8∞òÜßÏ2
 L	java:S106."+Replace this use of System.out by a logger.(Ç€◊˚˙ˇˇˇˇ8≤òÜßÏ2
 L	java:S1060"+Replace this use of System.out by a logger.(ˇ¯ÿø¯ˇˇˇˇ8≤òÜßÏ2
+=======
+E	java:S106,"+Replace this use of System.out by a logger.(Ù•Å‚˚ˇˇˇˇ
+E	java:S106."+Replace this use of System.out by a logger.(Ç€◊˚˙ˇˇˇˇ
+E	java:S1060"+Replace this use of System.out by a logger.(ˇ¯ÿø¯ˇˇˇˇ
+G	java:S1062"+Replace this use of System.out by a logger.(¯Ì≈°8”È“ºÏ2
+>>>>>>> origin
 C
 java:S1128".Remove this unused import 'java.util.HashSet'.( ÇÍX

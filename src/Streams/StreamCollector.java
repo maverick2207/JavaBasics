@@ -47,5 +47,7 @@ public class StreamCollector {
 
         System.out.println("git test");
 
+        System.out.println("git test2");
+
     }
 }
