@@ -23,6 +23,9 @@ class m extends l {
 public class ExtendBasics2 {
 
     public static void main(String[] args) {
+        // Creating an object of class m, which will invoke the constructor chain
+        // k -> l -> m
+
         m obj = new m();
     }
 

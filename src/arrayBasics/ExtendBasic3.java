@@ -26,7 +26,7 @@ class B1 extends A1 {
     }
 
     void m3() {
-        System.out.println("class A1 - method m3");
+        System.out.println("class B1 - method m3");
 
     }
 }
@@ -61,5 +61,14 @@ public class ExtendBasic3 {
         b.m3();  // if it is not available in object class , then it will look for super class
         System.out.println(b.a); //will print variable value from class b
         System.out.println(b.b);
+
+        // if variable is not available in reference class then it will throw compilation error
+        // for static variable call check always from class name
+        System.out.println(A1.b); // will print variable value from class A1
+        System.out.println(B1.b); // will print variable value from class B1
+        // if method is not available in reference class then it will throw compilation error
+        // for static method call check always from class name
+        // A1.m3(); // compilation error as m3 is not available in A1 class
+
     }
 }

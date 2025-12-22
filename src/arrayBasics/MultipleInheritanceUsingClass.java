@@ -65,5 +65,10 @@ public class MultipleInheritanceUsingClass implements Jeep, Car {
     public static void main(String args[]) {
         MultipleInheritanceUsingClass v = new MultipleInheritanceUsingClass();
         v.drive(); //Output - Vehicle is driving
+
+        Car car = new MultipleInheritanceUsingClass();
+        car.drive(); //Output - Vehicle is driving
+        Jeep jeep = new MultipleInheritanceUsingClass();
+        jeep.drive(); //Output - Vehicle is driving
     }
 }

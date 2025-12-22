@@ -1,6 +1,5 @@
 package arrayBasics;
 
-import java.lang.constant.Constable;
 
 public class TESTMS {
 

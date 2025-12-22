@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login Successful</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;background:#f8f9fa} .card{margin-top:6rem}</style>
+</head>
+<body>
+  <main class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm text-center">
+          <div class="card-body">
+            <h1 class="display-6 text-success">Login successful!</h1>
+            <p id="welcomeText" class="lead">Welcome back.</p>
+            <p class="muted small">You have successfully logged in to the playground.</p>
+            <div class="mt-3">
+              <button id="backBtn" class="btn btn-primary">Back to Playground</button>
+              <button id="openPlaygroundBtn" class="btn btn-outline-secondary ms-2">Open Playground in new tab</button>
+            </div>
+            <div class="mt-3">
+              <a href="SeleniumDemo.html" class="small">Return to Playground page</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Read username from querystring and display it
+    function qs(name) {
+      name = name.replace(/[\[\]]/g, '\\$&');
+      const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+      const results = regex.exec(window.location.href);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+    const user = qs('user');
+    const welcome = document.getElementById('welcomeText');
+    if (user && welcome) welcome.textContent = `Welcome, ${user}!`;
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      // navigate back to the playground
+      window.location.href = 'SeleniumDemo.html';
+    });
+    document.getElementById('openPlaygroundBtn').addEventListener('click', () => {
+      window.open('SeleniumDemo.html', '_blank');
+    });
+  </script>
+</body>
+</html>

@@ -5,14 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selenium Practice Playground</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root { --brand: #0d6efd; --muted: #6c757d; }
         body {
-            font-family: sans-serif;
-            margin: 20px;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #212529;
         }
+        main { padding-top: 1rem; padding-bottom: 2rem; }
+        .hero { background: #fff; padding: 1.25rem; border-radius: .5rem; box-shadow: 0 0 12px rgba(0,0,0,0.03); }
         .form-group {
             margin-bottom: 20px;
         }
+        iframe { width: 100%; height: 320px; min-height: 180px; border-radius: 6px; }
+        .frame-container .frame-row { gap: 1rem; }
+        .card-slim { padding: .85rem; background: #fff; border-radius: .5rem; box-shadow: 0 0 8px rgba(0,0,0,.03); }
+        .hint-badge { font-size: .75rem; color: #fff; background: var(--brand); padding: .15rem .4rem; border-radius: .25rem; }
+        .muted { color: var(--muted); }
+
         #hoverTarget {
             background-color: lightblue;
             padding: 10px;
@@ -37,6 +51,23 @@
             text-align: center;
             margin-top: 20px;
         }
+
+        /* Mouse-specific helpers */
+        .mouse-box {
+            background: #eef6ff;
+            padding: 12px;
+            border-radius: 6px;
+            min-height: 48px;
+            display:flex;align-items:center;justify-content:center;
+        }
+        #rightClickTarget {
+            background: #fff3cd; border: 1px dashed #d39e00; cursor: context-menu; padding: 10px; border-radius:6px;
+        }
+        #moveTarget {
+            background: #e2f0ff; padding: 12px; min-height: 64px; border: 1px solid #b6d4ff; border-radius:6px;
+        }
+        #holdBtn { cursor: pointer; }
+
         #messageArea {
             margin-top: 10px;
             padding: 10px;
@@ -78,12 +109,31 @@
         .frame-column {
             flex: 1;
             width: 100%;
+            min-height: 320px; /* larger frame area */
+            box-sizing: border-box; /* contain borders/padding */
+            overflow: hidden; /* prevent iframe or child elements from visually escaping */
         }
-        iframe {
+        .frame-row { display:flex; flex:1; align-items:flex-start; }
+        .frame-column > iframe, .frame-column .frame-inner {
             width: 100%;
             height: 100%;
+            display: block;
+            box-sizing: border-box;
             border: 1px solid #ccc;
+            border-radius: 6px;
+            position: relative;
+            z-index: 1;
+            margin-top: .8rem; /* gap so labels don't overlap */
+            margin-bottom: .9rem; /* ensure space below the iframe */
+            background-clip: padding-box;
+            min-height: 260px; /* ensure iframe has a useful minimum height */
         }
+        /* add a larger vertical gap between top and bottom frame rows */
+        .frame-row + .frame-row { margin-top: 1.5rem; }
+        /* nudge the left/right (second row) frames downward a bit more */
+        .frame-row:last-of-type .frame-column > iframe, .frame-row:last-of-type .frame-column .frame-inner { margin-top: 1.6rem; }
+        /* specifically ensure top frame has extra bottom spacing */
+        .frame-row:first-of-type .frame-column > iframe, .frame-row:first-of-type .frame-column .frame-inner { margin-bottom: 1.25rem; }
         .frame-inner {
             width: 100%;
             height: 100%;
@@ -103,8 +153,6 @@
             border: 1px solid rgba(0,0,0,.15);
             border-radius: .25rem;
             box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
-            overflow: auto; /* Add this line */
-            max-height: 200px; /* Add this line */
         }
         .dropdown-menu.show {
             display: block;
@@ -133,208 +181,1124 @@
             overflow: hidden;
             border-top: 1px solid #e9ecef;
         }
+        /* Multi-level menu support */
+        .dropdown-submenu { position: relative; }
+        .dropdown-submenu > .dropdown-menu { top: 0; left: 100%; margin-top: -6px; margin-left: -1px; border-radius: 0.25rem; }
+        .dropdown-submenu:hover > .dropdown-menu { display: block; }
+        .dropdown-hover:hover > .dropdown-menu { display: block; margin-top: 0; }
+        .dropdown-hover.force-hide > .dropdown-menu { display: none; }
     </style>
 </head>
 <body>
 
-<h1>Selenium Practice Playground</h1>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="#"><i class="bi bi-toggles2 me-2"></i> <strong>Practice Playground</strong></a>
+    <div class="d-flex ms-auto">
+      <button class="btn btn-outline-secondary me-2" id="showHintsBtn" data-bs-toggle="offcanvas" data-bs-target="#hintsCanvas" aria-controls="hintsCanvas"><i class="bi bi-lightbulb"></i> Hints</button>
+      <button class="btn btn-primary" id="startBtn" type="button" title="Run demo sequence"><i class="bi bi-play-fill me-1"></i> Start</button>
+    </div>
+  </div>
+</nav>
 
-<div class="form-group">
-    <label for="simpleText">Text Box:</label>
-    <input type="text" id="simpleText" class="form-control" placeholder="Enter text here">
+<!-- Hints offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="hintsCanvas" aria-labelledby="hintsLabel">
+  <div class="offcanvas-header">
+    <h5 id="hintsLabel">Locator Hints</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <p class="muted">Common selectors to use in your tests: <small class="muted">(dropdowns are grouped under <strong>Dropdowns</strong>)</small></p>
+    <ul class="list-unstyled">
+      <li><span class="hint-badge">#username</span> — Login username</li>
+      <li><span class="hint-badge">#password</span> — Login password</li>
+      <li><span class="hint-badge">#simpleText</span> — Text input</li>
+      <li><span class="hint-badge">#simpleDropdown</span> — Single select</li>
+      <li><span class="hint-badge">#multiSelect</span> — Multi select</li>
+      <li><span class="hint-badge">#scrollingDropdownInput</span> — Combobox Input</li>
+      <li><span class="hint-badge">#scrollingDropdownIcon</span> — Combobox Icon</li>
+      <li><span class="hint-badge">#countrySearch</span> — Searchable Country Dropdown</li>
+      <li><span class="hint-badge">#simpleButton</span> — Alert / action</li>
+      <li><span class="hint-badge">#dragTarget</span> / <span class="hint-badge">#dropTarget</span> — Drag & Drop</li>
+      <li><span class="hint-badge">#doubleClickButton</span> — Double click</li>
+      <li><span class="hint-badge">#rightClickTarget</span> — Right click / context menu</li>
+      <li><span class="hint-badge">#holdBtn</span> / <span class="hint-badge">#holdDuration</span> — Press & hold (duration)</li>
+      <li><span class="hint-badge">#moveTarget</span> / <span class="hint-badge">#moveCoords</span> — Move-to / mouse coordinates</li>
+      <li><span class="hint-badge">#inlineRadio1</span> / <span class="hint-badge">#inlineRadio2</span> — Radio buttons</li>
+      <li><span class="hint-badge">#inlineCheckbox1</span> / <span class="hint-badge">#inlineCheckbox2</span> — Checkboxes</li>
+      <li><span class="hint-badge">#shadowHost</span> — Simple Shadow Host (see inner content)</li>
+      <li><span class="hint-badge">#complexShadowHost</span> — Complex Shadow Host (custom element)</li>
+      <li><span class="hint-badge">getComplexShadowValue()</span> — Helper to read complex shadow input</li>
+      <li><span class="hint-badge">#datePicker</span> — Date input</li>
+      <li><span class="hint-badge">#toggleBtn</span> / <span class="hint-badge">#toggleValue</span> — Toggle button + value</li>
+      <li><span class="hint-badge">#linkSelenium</span> — Selenium Link</li>
+      <li><span class="hint-badge">#linkPlaywright</span> — Playwright Link</li>
+    </ul>
+  </div>
 </div>
 
-<div class="form-group">
-    <label for="simpleDropdown">Simple Dropdown:</label>
-    <select id="simpleDropdown" class="form-select">
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
-    </select>
-</div>
+<main class="container my-4" role="main">
+  <div class="hero mb-4">
+    <div class="d-flex align-items-center">
+      <div class="me-3 display-6 text-primary"><i class="bi bi-gear-fill"></i></div>
+      <div>
+        <h1 class="h3 mb-1">Selenium & Playwright Practice Playground</h1>
+        <p class="mb-0 text-muted">A small demo page with interactable components for testing automated scripts and learning selectors.</p>
+      </div>
+    </div>
+  </div>
 
-<div class="form-group">
-    <label>Bootstrap Dropdown:</label>
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="bootstrapDropdown" data-bs-toggle="dropdown" aria-expanded="true">
-            Choose Option
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="bootstrapDropdown">
-            <li><a class="dropdown-item" href="#">Bootstrap Option 1</a></li>
-            <li><a class="dropdown-item" href="#">Bootstrap Option 2</a></li>
-            <li><a class="dropdown-item" href="#">Bootstrap Option 3</a></li>
+  <h2 class="h5 mb-3">Controls & Forms</h2>
+  <div class="row mb-3">
+    <div class="col-md-8">
+      <div class="card card-slim">
+        <strong>How to use:</strong>
+        <p class="mb-0 muted">Use the <em>Hints</em> button to quickly find element ids, then write scripts to interact with text inputs, dropdowns, buttons, drag-and-drop, and frames.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card card-slim">
+        <strong>Quick tasks</strong>
+        <ul class="mb-0">
+          <li>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="task1" title="Mark task: Locate #username" aria-label="Locate #username">
+              <label class="form-check-label" for="task1">Locate <code>#username</code></label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="task2" title="Mark task: Select multi-value in #multiSelect" aria-label="Select multi-value in #multiSelect">
+              <label class="form-check-label" for="task2">Select multi-value in <code>#multiSelect</code></label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="task3" title="Mark task: Drag #dragTarget to #dropTarget" aria-label="Drag #dragTarget to #dropTarget">
+              <label class="form-check-label" for="task3">Drag <code>#dragTarget</code> to <code>#dropTarget</code></label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="task4" title="Mark task: Pick a date with #datePicker" aria-label="Pick a date with #datePicker">
+              <label class="form-check-label" for="task4">Pick a date with <code>#datePicker</code></label>
+            </div>
+          </li>
+          <li>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="task5" title="Mark task: Select an option in #simpleDropdown" aria-label="Select an option in #simpleDropdown">
+              <label class="form-check-label" for="task5">Select an option in <code>#simpleDropdown</code></label>
+            </div>
+          </li>
         </ul>
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="form-group">
-    <label>Shadow Root Element:</label>
-    <div class="shadow-host" id="shadowHost">
-        This is outside the shadow root.
-    </div>
-    <div id="shadowContent"></div>
-</div>
-
-<div class="form-group">
-    <label for="multiSelect">Multi-Select Dropdown:</label>
-    <select id="multiSelect" class="form-select" multiple aria-label="Multiple select example">
-        <option value="apple">Apple</option>
-        <option value="banana">Banana</option>
-        <option value="cherry">Cherry</option>
-        <option value="date">Date</option>
-    </select>
-</div>
-
-<div class="form-group">
-    <label>Bootstrap Multi-Select Dropdown</label>
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="bootstrapMultiSelect" data-bs-toggle="dropdown" aria-expanded="false">
-            Choose Options
-        </button>
-        <div class="dropdown-menu" aria-labelledby="bootstrapMultiSelect" id="bootstrapMultiSelectMenu">
-            <label class="dropdown-item">
-                <input type="checkbox" value="option1"> Option 1
-            </label>
-            <label class="dropdown-item">
-                <input type="checkbox" value="option2"> Option 2
-            </label>
-            <label class="dropdown-item">
-                <input type="checkbox" value="option3"> Option 3
-            </label>
-        </div>
-        <select id="bootstrapMultiSelectSelect" class="form-select" multiple style="display: none;">
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-        </select>
-    </div>
-    <div id="bootstrapMultiSelectValues" class="mt-2"></div>
-</div>
-
-<div class="form-group">
-    <label>Radio Buttons:</label><br>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-        <label class="form-check-label" for="inlineRadio1">Radio 1</label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-        <label class="form-check-label" for="inlineRadio2">Radio 2</label>
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Checkboxes:</label><br>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-        <label class="form-check-label" for="inlineCheckbox1">Checkbox 1</label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-        <label class="form-check-label" for="inlineCheckbox2">Checkbox 2</label>
-    </div>
-</div>
-
-<div class="form-group">
-    <button id="simpleButton" class="btn btn-primary">Click Me</button>
-</div>
-
-<div class="form-group">
-    <button id="disappearingButton" class="btn btn-warning" onclick="toggleMessage('disappearingMessage', true, 3000)">Disappearing Message</button>
-    <div id="disappearingMessage" class="alert alert-info mt-2 hidden">This message will disappear in 3 seconds!</div>
-</div>
-
-<div class="form-group">
-    <button id="staticMessageButton" class="btn btn-success" onclick="showMessage('staticMessageArea', 'Operation successful!')">Show Static Message</button>
-    <div id="staticMessageArea" class="alert alert-success mt-2 hidden"></div>
-</div>
-
-<div class="form-group">
-    <label>Mouse Hover:</label>
-    <div id="hoverTarget">Hover Over Me</div>
-    <div id="hoverMessage" class="alert alert-secondary mt-2 hidden">You hovered!</div>
-</div>
-
-<div class="form-group">
-    <label>Drag and Drop:</label><br>
-    <div id="dragTarget" draggable="true">Drag Me</div>
-    <div id="dropTarget">Drop Here</div>
-    <div id="dragDropMessage" class="alert alert-warning mt-2 hidden">Item dropped!</div>
-</div>
-
-<div class="form-group">
-    <label>Double Click:</label>
-    <button id="doubleClickButton" class="btn btn-info">Double Click Me</button>
-    <div id="doubleClickMessage" class="alert alert-info mt-2 hidden">Double Clicked!</div>
-</div>
-
-<div class="form-group">
-    <label for="messageBox">Message Box (with character limit):</label>
-    <textarea id="messageBox" class="form-control" maxlength="50" onkeyup="countCharacters(this)"></textarea>
-    <div id="characterCounter">0 / 50 characters</div>
-    <div id="limitReachedMessage" class="alert alert-danger mt-2 hidden"></div>
-</div>
-
-<div class="form-group">
-    <label>Pop-up (Simulated - opens in a new tab/window):</label>
-    <button class="btn btn-secondary" onclick="openPopup()">Open Pop-up</button>
-</div>
-
-<div class="form-group">
-    <label>Alert:</label>
-    <button class="btn btn-danger" onclick="showAlert()">Show Alert</button>
-</div>
-
-<div class="form-group">
-    <label>Confirm:</label>
-    <button class="btn btn-warning" onclick="showConfirm()">Show Confirm</button>
-    <div id="confirmResult" class="alert alert-warning mt-2 hidden"></div>
-</div>
-
-<div class="form-group">
-    <label>Prompt:</label>
-    <button class="btn btn-info" onclick="showPrompt()">Show Prompt</button>
-    <div id="promptResult" class="alert alert-info mt-2 hidden"></div>
-</div>
-
-<div class="form-group">
-    <label>Frames/Framesets:</label><br>
-    <div class="frame-container">
-        <div class="frame-row">
-            <iframe  name="top_frame" class="frame-column" src="frame_top.html"></iframe>
-        </div>
-        <div class="frame-row">
-            <iframe  name="nested_frame" class="frame-column" src="frame_left.html">
-                <iframe name="inner_frame" class="frame-inner" src="frame_right.html"></iframe>
-        </div>
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Login:</label>
-    <form id="loginForm">
+<div class="form-group card card-slim">
+    <h3 class="h6 mb-2">Login</h3>
+    <form id="loginForm" aria-label="Login form">
         <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" class="form-control" value="admin">
+            <input type="text" id="username" class="form-control" placeholder="username" value="" autocomplete="current-username" aria-describedby="loginMessage">
         </div>
         <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" class="form-control" value="password">
+            <input type="password" id="password" class="form-control" placeholder="password" value="" autocomplete="current-password" aria-label="Password">
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
-    <div id="loginMessage" class="alert mt-2 hidden"></div>
+    <p class="mt-2 mb-0 text-muted">Valid username: <strong>admin</strong>, password: <strong>password</strong></p>
+    <div id="loginMessage" class="alert mt-2 hidden" role="status" aria-live="polite"></div>
+</div>
+
+<hr/>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="textMessages" role="region" aria-labelledby="textMessagesLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="textMessagesLabel">Text & Messages</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="simpleText">Text Box:</label>
+              <input type="text" id="simpleText" class="form-control" placeholder="Enter text here">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="messageBox">Message Box (with character limit):</label>
+              <textarea id="messageBox" class="form-control" maxlength="50" onkeyup="countCharacters(this)"></textarea>
+              <div id="characterCounter" class="small text-muted mt-1">0 / 50 characters</div>
+              <div id="limitReachedMessage" class="alert alert-danger mt-2 hidden" role="alert">Character limit reached</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="dateControls" role="region" aria-labelledby="dateControlsLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="dateControlsLabel">Date Controls</h2>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-4">
+            <label for="datePicker">Single Date</label>
+            <input type="date" id="datePicker" class="form-control" aria-label="Date picker" autocomplete="off" />
+            <div id="dateDisplay" class="mt-2 text-muted small">Selected: none</div>
+          </div>
+          <div class="col-md-4">
+            <label for="fromDate">From Date</label>
+            <input type="date" id="fromDate" class="form-control" aria-label="From date" autocomplete="off" />
+          </div>
+          <div class="col-md-4">
+            <label for="toDate">To Date</label>
+            <input type="date" id="toDate" class="form-control" aria-label="To date" autocomplete="off" />
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <button id="applyDateRange" class="btn btn-primary me-2">Apply Range</button>
+            <button id="clearDateRange" class="btn btn-outline-secondary">Clear</button>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-12 text-center">
+            <div id="dateRangeResult" class="small text-muted">Range: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="shadowPlayground" role="region" aria-labelledby="shadowPlaygroundLabel">
+      <div class="card-body">
+        <h2 class="display-4 mb-3" id="shadowPlaygroundLabel">Shadow DOM Playground</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h3 class="h6">Simple Shadow Host</h3>
+            <div class="shadow-host" id="shadowHost">This is outside the shadow root.</div>
+            <div id="shadowContent" class="small text-muted mt-2">Shadow content created programmatically</div>
+            <div class="mt-2">
+              <div id="shadowInnerResult" class="small text-muted mt-2">Inner: -</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3 class="h6">Complex Shadow (custom element)</h3>
+            <div class="shadow-host" id="complexShadowHost"></div>
+            <div class="mt-2 d-flex align-items-center">
+              <button id="readComplexShadow" class="btn btn-sm btn-primary">Read Shadow Value</button>
+              <button id="setComplexShadow" class="btn btn-sm btn-outline-primary ms-2">Set Shadow Value</button>
+              <input id="setComplexInput" class="form-control form-control-sm d-inline-block w-auto ms-2" placeholder="New value">
+            </div>
+            <div id="complexShadowResult" class="small text-muted mt-2">Result: -</div>
+            <div class="form-text text-muted mt-1">Use the helper functions <code>getComplexShadowValue()</code>, <code>setComplexShadowValue(v)</code>, or <code>clickComplexShadowButton()</code> from your automation script.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-slim mb-3" id="dropdowns" role="region" aria-labelledby="dropdownsLabel">
+            <div class="card-body">
+                <h2 class="display-6 mb-3" id="dropdownsLabel">Dropdowns</h2>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="simpleDropdown">Simple Dropdown:</label>
+                            <select id="simpleDropdown" class="form-select" aria-label="Simple dropdown">
+                                <option value="">--Please choose an option--</option>
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                                <option value="option4">Option 4</option>
+                                <option value="option5">Option 5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="multiSelect">Multi-Select Dropdown:</label>
+                            <select id="multiSelect" class="form-select" multiple aria-label="Multiple select example">
+                                <option value="apple">Apple</option>
+                                <option value="banana">Banana</option>
+                                <option value="cherry">Cherry</option>
+                                <option value="date">Date</option>
+                                <option value="kiwi">Kiwi</option>
+                                <option value="orange">Orange</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="bootstrapDropdown">Bootstrap Dropdown:</label>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="bootstrapDropdown" data-bs-toggle="dropdown" aria-expanded="true">
+                                    Choose Option
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="bootstrapDropdown" id="bootstrapDropdownMenu">
+                                    <li><a class="dropdown-item" href="#">Bootstrap Option 1</a></li>
+                                    <li><a class="dropdown-item" href="#">Bootstrap Option 2</a></li>
+                                    <li><a class="dropdown-item" href="#">Bootstrap Option 3</a></li>
+                                    <li><a class="dropdown-item" href="#">Bootstrap Option 4</a></li>
+                                    <li><a class="dropdown-item" href="#">Bootstrap Option 5</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="bootstrapMultiSelect">Bootstrap Multi-Select Dropdown</label>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="bootstrapMultiSelect" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="bootstrapMultiSelectMenu">
+                                    Choose Options
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="bootstrapMultiSelect" id="bootstrapMultiSelectMenu">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="option1"> Option 1
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="option2"> Option 2
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="option3"> Option 3
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="option4"> Option 4
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="option5"> Option 5
+                                    </label>
+                                </div>
+                                <select id="bootstrapMultiSelectSelect" class="form-select" multiple style="display: none;" title="Hidden multi-select mirror for accessibility" aria-label="Bootstrap multi-select hidden mirror">
+                                    <option value="option1">Option 1</option>
+                                    <option value="option2">Option 2</option>
+                                    <option value="option3">Option 3</option>
+                                    <option value="option4">Option 4</option>
+                                    <option value="option5">Option 5</option>
+                                </select>
+                                <div id="bootstrapMultiSelectValues" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="countrySearch" class="form-label">Select Country (Searchable & Scrollable):</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="countrySearch" placeholder="Start typing country name..." autocomplete="off">
+                            <div id="countryList" class="list-group position-absolute w-100 shadow start-0" style="display:none; max-height: 200px; overflow-y: auto; z-index: 1050;"></div>
+                        </div>
+                        <div id="countryResult" class="small text-muted mt-1">Selected: None</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="hoverMenu" role="region" aria-labelledby="hoverMenuLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="hoverMenuLabel">Multi-Level Hover Menu</h2>
+        <p class="muted">Hover over the items to reveal nested sub-menus. Click a terminal item to select it.</p>
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border rounded">
+          <div class="container-fluid">
+            <div class="collapse navbar-collapse">
+              <ul class="navbar-nav">
+                <li class="nav-item dropdown dropdown-hover">
+                  <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="mainMenu1" role="button" aria-expanded="false">
+                    Main Menu 1
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="mainMenu1">
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Item 1')">Item 1</a></li>
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Item 2')">Item 2</a></li>
+                    <li class="dropdown-divider"></li>
+                    <li class="dropdown-submenu">
+                      <a class="dropdown-item dropdown-toggle" href="javascript:void(0)">Sub Menu</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Sub Item 1')">Sub Item 1</a></li>
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" href="javascript:void(0)">Deep Menu</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Deep Item 1')">Deep Item 1</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Deep Item 2')">Deep Item 2</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Deep Item 3')">Deep Item 3</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Sub Item 2')">Sub Item 2</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-item dropdown dropdown-hover">
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="mainMenu2">Main Menu 2</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Menu 2 Item 1')">Menu 2 Item 1</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Menu 2 Item 2')">Menu 2 Item 2</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="https://www.selenium.dev/" target="_blank" id="linkSelenium">Selenium</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://playwright.dev/" target="_blank" id="linkPlaywright">Playwright</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="mt-3">
+            <span class="text-muted">Selected Item: </span>
+            <strong id="menuSelectedValue">None</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="selectionControls" role="region" aria-labelledby="selectionControlsLabel">
+      <div class="card-body">
+        <h2 class="display-4 mb-3" id="selectionControlsLabel">Selection Controls</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h3 class="h6 mb-1">Radio Buttons</h3>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Male">
+                <label class="form-check-label" for="inlineRadio1">Male</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Female">
+                <label class="form-check-label" for="inlineRadio2">Female</label>
+            </div>
+            <div id="radioSelection" class="small text-muted mt-2">Selected: -</div>
+          </div>
+          <div class="col-md-6">
+            <h3 class="h6 mb-1">Checkboxes</h3>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Checkbox 1">
+                <label class="form-check-label" for="inlineCheckbox1">Checkbox 1</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Checkbox 2">
+                <label class="form-check-label" for="inlineCheckbox2">Checkbox 2</label>
+            </div>
+            <div id="checkboxSelection" class="small text-muted mt-2">Selected: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+                <label class="form-check-label" for="inlineCheckbox2">Checkbox 2</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="mouseActions" role="region" aria-labelledby="mouseActionsLabel">
+      <div class="card-body">
+        <h2 class="display-4 mb-3" id="mouseActionsLabel">Mouse Actions</h2>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Hover</h3>
+            <div id="hoverTarget" class="mouse-box">Hover Over Me</div>
+            <div id="hoverMessage" class="alert alert-secondary mt-2 hidden">You hovered!</div>
+          </div>
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Drag and Drop</h3>
+            <div id="dragTarget" class="drag-item" draggable="true">Drag Me</div>
+            <div id="dropTarget" class="drop-area mt-2">Drop Here</div>
+            <div id="dragDropMessage" class="alert alert-warning mt-2 hidden">Item dropped!</div>
+          </div>
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Double Click</h3>
+            <button id="doubleClickButton" class="btn btn-info" title="Double click this button" aria-label="Double click">Double Click Me</button>
+            <div id="doubleClickMessage" class="alert alert-info mt-2 hidden">Double Clicked!</div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Right Click (Context Menu)</h3>
+            <div id="rightClickTarget" class="mouse-box">Right-click Me</div>
+            <div id="contextMessage" class="alert alert-dark mt-2 hidden">Context menu triggered!</div>
+          </div>
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Click & Hold</h3>
+            <button id="holdBtn" class="btn btn-outline-secondary w-100">Press and Hold</button>
+            <div id="holdMessage" class="small text-muted mt-2">Hold duration: <span id="holdDuration">0</span>ms</div>
+          </div>
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Move to (track mouse)</h3>
+            <div id="moveTarget" class="mouse-box">Move your mouse here</div>
+            <div id="moveMessage" class="small text-muted mt-2">Coords: <span id="moveCoords">-</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="alertsPopups" role="region" aria-labelledby="alertsPopupsLabel">
+      <div class="card-body">
+        <h2 class="display-5 mb-3" id="alertsPopupsLabel">Alerts & Pop-ups</h2>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <h3 class="h6 mb-1">Simple Summary</h3>
+              <button id="simpleButton" class="btn btn-primary" title="Show a summary alert">Click Me</button>
+              <p id="messageArea" class="mt-2">This action opens a popup containing the values selected above.</p>
+            </div>
+            <div class="form-group mt-3">
+              <button id="disappearingButton" class="btn btn-warning" onclick="toggleMessage('disappearingMessage', true, 3000)" title="Show disappearing message">Disappearing Message</button>
+              <div id="disappearingMessage" class="alert alert-info mt-2 hidden">This message will disappear in 3 seconds!</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <button id="staticMessageButton" class="btn btn-success" onclick="showMessage('staticMessageArea', 'Operation successful!')" title="Show a static temporary message">Show Static Message</button>
+              <div id="staticMessageArea" class="alert alert-success mt-2 hidden"></div>
+            </div>
+            <div class="form-group mt-3">
+              <h3 class="h6 mb-1">Pop-up (Simulated)</h3>
+              <button class="btn btn-secondary" onclick="openPopup()" title="Open a simulated pop-up">Open Pop-up</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <h3 class="h6 mb-1">Alert</h3>
+              <button class="btn btn-danger" onclick="showAlert()" title="Open a JavaScript alert">Show Alert</button>
+            </div>
+            <div class="form-group mt-3">
+              <h3 class="h6 mb-1">Confirm</h3>
+              <button class="btn btn-warning" onclick="showConfirm()" title="Open a confirmation dialog">Show Confirm</button>
+              <div id="confirmResult" class="alert alert-warning mt-2 hidden"></div>
+            </div>
+            <div class="form-group mt-3">
+              <h3 class="h6 mb-1">Prompt</h3>
+              <button class="btn btn-info" onclick="showPrompt()" title="Open a prompt dialog">Show Prompt</button>
+              <div id="promptResult" class="alert alert-info mt-2 hidden"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Window Handling -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="windowHandling" role="region" aria-labelledby="windowHandlingLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="windowHandlingLabel">Window Handling</h2>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <div class="mb-2">
+              <button id="openWindowBtn" class="btn btn-primary">Open Blank Window</button>
+              <button id="openInputWindow" class="btn btn-outline-primary ms-2">Open Input Window</button>
+            </div>
+            <div class="mb-2">
+              <button id="readChildTitleBtn" class="btn btn-sm btn-info">Read Child Title</button>
+              <button id="closeChildWindowBtn" class="btn btn-sm btn-danger ms-2">Close Child Window</button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div id="windowResult" class="small text-muted">Window: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Waits -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="waits" role="region" aria-labelledby="waitsLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="waitsLabel">Waits</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="delayMsInput">Delay (ms)</label>
+            <input id="delayMsInput" class="form-control form-control-sm w-auto d-inline-block" value="2000" aria-label="delay in milliseconds">
+            <button id="startDelayedBtn" class="btn btn-sm btn-primary ms-2">Start Delayed Element</button>
+            <button id="clearDelayedBtn" class="btn btn-sm btn-outline-secondary ms-2">Clear</button>
+            <div id="waitArea" class="mt-2"></div>
+          </div>
+          <div class="col-md-6">
+            <label for="waitSelectorInput">Selector to wait for</label>
+            <input id="waitSelectorInput" class="form-control form-control-sm w-100" value="#delayedEl" aria-label="CSS selector to wait for">
+            <label for="waitTimeoutInput" class="mt-2">Timeout (ms)</label>
+            <input id="waitTimeoutInput" class="form-control form-control-sm w-auto d-inline-block" value="5000" aria-label="timeout in milliseconds">
+            <button id="explicitWaitBtn" class="btn btn-sm btn-success ms-2">Explicit Wait</button>
+            <div id="waitResult" class="small text-muted mt-2">Wait result: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File Uploads -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="fileUploads" role="region" aria-labelledby="fileUploadsLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="fileUploadsLabel">File Uploads</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="singleFileInput">Single File Upload</label>
+            <input id="singleFileInput" type="file" class="form-control" data-test="single-file" aria-label="Single file input">
+            <div class="mt-2">
+              <button id="singleUploadBtn" class="btn btn-sm btn-success">Upload</button>
+              <button id="singleClearBtn" class="btn btn-sm btn-outline-secondary ms-2">Clear</button>
+            </div>
+            <div id="singleFilePreview" class="mt-2 small text-muted">No file selected</div>
+            <div id="singleUploadResult" class="mt-2 small text-success hidden" aria-live="polite">Upload: -</div>
+          </div>
+          <div class="col-md-6">
+            <label for="multiFileInput">Multi File Upload</label>
+            <input id="multiFileInput" type="file" multiple class="form-control" data-test="multi-file" aria-label="Multi file input">
+            <div class="mt-2">
+              <button id="multiUploadBtn" class="btn btn-sm btn-success">Upload</button>
+              <button id="multiClearBtn" class="btn btn-sm btn-outline-secondary ms-2">Clear</button>
+            </div>
+            <div id="multiFileList" class="mt-2 small text-muted">No files selected</div>
+            <div id="multiUploadResult" class="mt-2 small text-success hidden" aria-live="polite">Upload: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File Download -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="fileDownload" role="region" aria-labelledby="fileDownloadLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="fileDownloadLabel">File Download</h2>
+        <div class="row g-3">
+          <div class="col-md-12">
+            <button id="downloadSampleBtn" class="btn btn-primary">Download Sample File</button>
+            <div id="downloadResult" class="small text-muted mt-2">No download yet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Simulated Network -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="simulatedNetwork" role="region" aria-labelledby="simulatedNetworkLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="simulatedNetworkLabel">Simulated Network / Fetch</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="fetchDelayInput">Delay (ms)</label>
+            <input id="fetchDelayInput" class="form-control form-control-sm w-auto d-inline-block" value="1500" aria-label="fetch delay">
+            <button id="fetchDelayedBtn" class="btn btn-sm btn-primary ms-2">Fetch Data (delayed)</button>
+            <div id="fetchResult" class="mt-2 small text-muted">Result: -</div>
+          </div>
+          <div class="col-md-6">
+            <p class="muted">Simulates a slow network response to exercise explicit waits.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Sample -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="modalSample" role="region" aria-labelledby="modalSampleLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="modalSampleLabel">Modal Dialog</h2>
+        <div class="row g-3">
+          <div class="col-md-12">
+            <button id="openModalBtn" class="btn btn-primary">Open Modal</button>
+            <div id="modalResult" class="small text-muted mt-2">Last action: -</div>
+
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="sampleModal" tabindex="-1" aria-labelledby="sampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="sampleModalLabel">Sample Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Perform an action inside the modal.</p>
+                    <input id="modalInput" class="form-control" placeholder="Enter something" aria-label="Modal input">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="modalConfirmBtn" type="button" class="btn btn-primary">Confirm</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Progress / Cancellable Task -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="progressTask" role="region" aria-labelledby="progressTaskLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="progressTaskLabel">Progress & Cancellable Task</h2>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-8">
+            <div class="progress" style="height:20px;">
+              <div id="taskProgress" class="progress-bar" role="progressbar" style="width:0%" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+            <div id="taskMessage" class="small text-muted mt-2">Idle</div>
+          </div>
+          <div class="col-md-4 text-end">
+            <button id="startTaskBtn" class="btn btn-sm btn-primary">Start Task</button>
+            <button id="cancelTaskBtn" class="btn btn-sm btn-outline-danger ms-2">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sortable Lists -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="sortableLists" role="region" aria-labelledby="sortableListsLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="sortableListsLabel">Sortable Lists (Drag & Drop)</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h3 class="h6">List A</h3>
+            <div id="listA" class="border p-2" style="min-height:120px">
+              <div draggable="true" id="item-a1" class="p-2 border mb-2">Item A1</div>
+              <div draggable="true" id="item-a2" class="p-2 border mb-2">Item A2</div>
+              <div draggable="true" id="item-a3" class="p-2 border mb-2">Item A3</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3 class="h6">List B</h3>
+            <div id="listB" class="border p-2" style="min-height:120px">
+              <div draggable="true" id="item-b1" class="p-2 border mb-2">Item B1</div>
+              <div draggable="true" id="item-b2" class="p-2 border mb-2">Item B2</div>
+            </div>
+          </div>
+        </div>
+        <div id="sortResult" class="small text-muted mt-2">Last action: -</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Web Table (with pagination & navigation) -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="webTable" role="region" aria-labelledby="webTableLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="webTableLabel">Web Table & Pagination</h2>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-4">
+            <label for="tableSearch" class="form-label">Search</label>
+            <input id="tableSearch" class="form-control form-control-sm" placeholder="Search name or email" aria-label="table search">
+          </div>
+          <div class="col-md-3">
+            <label for="pageSizeSelect" class="form-label">Page size</label>
+            <select id="pageSizeSelect" class="form-select form-select-sm" aria-label="page size">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <div class="col-md-5 text-end">
+            <div class="btn-group" role="group" aria-label="pagination controls">
+              <button id="firstPageBtn" class="btn btn-sm btn-outline-secondary">« First</button>
+              <button id="prevPageBtn" class="btn btn-sm btn-outline-secondary">‹ Prev</button>
+              <span id="pageIndicator" class="btn btn-sm btn-light">Page 1 / 1</span>
+              <button id="nextPageBtn" class="btn btn-sm btn-outline-secondary">Next ›</button>
+              <button id="lastPageBtn" class="btn btn-sm btn-outline-secondary">Last »</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive mt-3">
+          <table id="dataTable" class="table table-striped table-bordered" data-test="data-table">
+            <thead>
+              <tr>
+                <th data-sort="id" style="width:80px">ID</th>
+                <th data-sort="name">Name</th>
+                <th data-sort="email">Email</th>
+                <th data-sort="role" style="width:120px">Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- generated rows -->
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-2 d-flex justify-content-between align-items-center">
+          <div id="tableInfo" class="small text-muted">Showing 0 items</div>
+          <div>
+            <button id="gotoPageInputBtn" class="btn btn-sm btn-outline-secondary">Go to page...</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dynamic Web Table (editable rows) -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="dynamicWebTable" role="region" aria-labelledby="dynamicWebTableLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="dynamicWebTableLabel">Dynamic Web Table (Add/Edit/Delete)</h2>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <button id="dynAddBtn" class="btn btn-sm btn-primary">Add Row</button>
+            <button id="dynAddManyBtn" class="btn btn-sm btn-outline-primary ms-2">Add 5 Rows</button>
+            <button id="dynRemoveSelBtn" class="btn btn-sm btn-outline-danger ms-2">Remove Selected</button>
+            <div class="form-text mt-2">Use the buttons to add or remove rows; edit or delete inline.</div>
+          </div>
+          <div class="col-md-6 text-end">
+            <div id="dynTableInfo" class="small text-muted">Rows: 0</div>
+          </div>
+        </div>
+        <div class="table-responsive mt-3">
+          <table id="dynTable" class="table table-sm table-striped" data-test="dynamic-table">
+            <thead>
+              <tr>
+                <th style="width:36px"><input id="dynSelectAll" type="checkbox" aria-label="select all"></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th style="width:120px">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Static Web Table (fixed rows) -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="staticWebTable" role="region" aria-labelledby="staticWebTableLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="staticWebTableLabel">Static Web Table</h2>
+        <div class="table-responsive">
+          <table id="staticTable" class="table table-bordered" data-test="static-table">
+            <thead>
+              <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Alice Johnson</td><td>alice@example.com</td><td>Admin</td></tr>
+              <tr><td>2</td><td>Bob Smith</td><td>bob@example.com</td><td>Editor</td></tr>
+              <tr><td>3</td><td>Clara Lee</td><td>clara@example.com</td><td>Viewer</td></tr>
+              <tr><td>4</td><td>David Kim</td><td>david@example.com</td><td>Editor</td></tr>
+              <tr><td>5</td><td>Eva Green</td><td>eva@example.com</td><td>Viewer</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-2 d-flex justify-content-between align-items-center">
+          <div id="staticInfo" class="small text-muted">Static rows: 5</div>
+          <div>
+            <button id="highlightRowBtn" class="btn btn-sm btn-outline-secondary">Highlight Row 3</button>
+            <button id="getStaticBtn" class="btn btn-sm btn-outline-primary ms-2">Get Rows</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="dynamicControls" role="region" aria-labelledby="dynamicControlsLabel">
+      <div class="card-body">
+        <h2 class="display-6 mb-3" id="dynamicControlsLabel">Dynamic Controls</h2>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-4">
+            <button id="dynamicBtn" class="btn btn-outline-primary w-100" title="Click to update the display">Click me</button>
+          </div>
+          <div class="col-md-4">
+            <input id="dynamicInput" class="form-control" placeholder="Optional custom message">
+          </div>
+          <div class="col-md-4">
+            <div id="dynamicText" class="lead fw-semibold text-dark mb-0" aria-live="polite">No action yet</div>
+            <div class="form-text text-muted">Type a message in the input and click the button to use it.</div>
+          </div>
+        </div>
+        <div class="row mt-3 g-3 align-items-center">
+          <div class="col-md-4">
+            <button id="toggleBtn" class="btn btn-secondary w-100" data-state="off" title="Toggle state">Toggle: OFF</button>
+          </div>
+          <div class="col-md-4">
+            <input id="toggleValue" class="form-control" readonly value="0" aria-label="Toggle value">
+          </div>
+          <div class="col-md-4">
+            <div id="toggleDisplay" class="small text-muted">Value: 0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-slim mb-3" id="framesPlayground" role="region" aria-labelledby="framesPlaygroundLabel">
+      <div class="card-body">
+        <h2 class="display-4 mb-3" id="framesPlaygroundLabel">Frames Playground</h2>
+        <p class="muted mb-3">A set of sample frames for practicing frame switching and nested frame scenarios.</p>
+        <div class="frame-container">
+          <div class="frame-row mb-3">
+            <div class="frame-column">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="small text-muted">Top Frame</div>
+              </div>
+              <iframe name="top_frame" class="frame-inner" src="frame_top.html" title="Top Frame" aria-label="Top Frame"></iframe>
+            </div>
+          </div>
+          <div class="frame-row">
+            <div class="frame-column">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="small text-muted">Left Frame</div>
+              </div>
+              <iframe name="left_frame" class="frame-inner" src="frame_left.html" title="Left Frame" aria-label="Left Frame"></iframe>
+            </div>
+            <div class="frame-column">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="small text-muted">Right Frame</div>
+              </div>
+              <iframe name="right_frame" class="frame-inner" src="frame_right.html" title="Right Frame" aria-label="Right Frame"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container for click feedback -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11000;">
+  <div id="actionToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="polite" aria-atomic="true">
+    <div class="d-flex">
+      <div id="actionToastBody" class="toast-body">Action</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Shadow Root Implementation
     const shadowHost = document.getElementById('shadowHost');
-    const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
-    const shadowContent = document.createElement('p');
-    shadowContent.id = 'shadow-content';
-    shadowContent.textContent = 'This is inside the shadow root.';
-    shadowRoot.appendChild(shadowContent);
+    if (shadowHost) {
+        const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+        const shadowContent = document.createElement('p');
+        shadowContent.id = 'shadow-content';
+        shadowContent.textContent = 'This is inside the shadow root.';
+        shadowRoot.appendChild(shadowContent);
+
+        // Add a small inner button inside the simple shadow for testing
+        const innerBtn = document.createElement('button');
+        innerBtn.id = 'shadowInnerBtn';
+        innerBtn.textContent = 'Inner Shadow Button';
+        innerBtn.className = 'btn btn-sm btn-outline-primary mt-2';
+        innerBtn.addEventListener('click', () => {
+            const resultEl = document.getElementById('shadowInnerResult');
+            if (resultEl) resultEl.textContent = `Inner: clicked @ ${new Date().toLocaleTimeString()}`;
+            try { globalShowToast && globalShowToast('Inner shadow button clicked', 'info'); } catch(e){}
+        });
+        shadowRoot.appendChild(innerBtn);
+    }
+
+    // Complex shadow: build the component from sub-components, each with its own shadow root
+    // Subcomponent: cs-input
+    class CSInput extends HTMLElement {
+        constructor() {
+            super();
+            const r = this.attachShadow({ mode: 'open' });
+            r.innerHTML = `
+                <style>
+                    :host { display:block; }
+                    input { padding: 4px 8px; }
+                </style>
+                <label>Inner input: <input id="cs-input" value="hello"></label>
+            `;
+        }
+        getValue() { return this.shadowRoot.getElementById('cs-input').value; }
+        setValue(v) { this.shadowRoot.getElementById('cs-input').value = v; }
+    }
+    if (!customElements.get('cs-input')) customElements.define('cs-input', CSInput);
+
+    // Subcomponent: cs-controls
+    class CSControls extends HTMLElement {
+        constructor() {
+            super();
+            const r = this.attachShadow({ mode: 'open' });
+            r.innerHTML = `
+                <style>
+                    :host { display:block; }
+                    button{ margin-right:6px; }
+                </style>
+                <button id="cs-btn" class="btn btn-sm btn-primary">Inner Click</button>
+                <button id="cs-clear" class="btn btn-sm btn-outline-secondary">Clear</button>
+            `;
+        }
+        connectedCallback() {
+            const btn = this.shadowRoot.getElementById('cs-btn');
+            const clear = this.shadowRoot.getElementById('cs-clear');
+            btn && btn.addEventListener('click', () => this.dispatchEvent(new CustomEvent('controls-click')));
+            clear && clear.addEventListener('click', () => this.dispatchEvent(new CustomEvent('controls-clear')));
+        }
+    }
+    if (!customElements.get('cs-controls')) customElements.define('cs-controls', CSControls);
+
+    // Subcomponent: cs-display
+    class CSDisplay extends HTMLElement {
+        constructor() {
+            super();
+            const r = this.attachShadow({ mode: 'open' });
+            r.innerHTML = `
+                <style>:host { display:block; color:#6c757d; }</style>
+                <div id="cs-display">Display: -</div>
+            `;
+        }
+        setText(v) { this.shadowRoot.getElementById('cs-display').textContent = `Display: ${v}`; }
+    }
+    if (!customElements.get('cs-display')) customElements.define('cs-display', CSDisplay);
+
+    // Complex host combines the three subcomponents
+    class ComplexShadow extends HTMLElement {
+        constructor() {
+            super();
+            const root = this.attachShadow({ mode: 'open' });
+            root.innerHTML = `
+                <style>
+                    .cs { font-family: Inter, sans-serif; background:#fff; padding:10px; border-radius:6px; border:1px solid #ddd; }
+                </style>
+                <div class="cs">
+                    <cs-input></cs-input>
+                    <div class="mt-2"><cs-controls></cs-controls></div>
+                    <div class="mt-2"><cs-display></cs-display></div>
+                </div>
+            `;
+        }
+        connectedCallback() {
+            const input = this.shadowRoot.querySelector('cs-input');
+            const controls = this.shadowRoot.querySelector('cs-controls');
+            const display = this.shadowRoot.querySelector('cs-display');
+
+            // When controls emit a click, read value from input and update display + emit shadow-action
+            controls && controls.addEventListener('controls-click', () => {
+                const val = input && input.getValue ? input.getValue() : null;
+                display && display.setText && display.setText(val);
+                this.dispatchEvent(new CustomEvent('shadow-action', { detail: { value: val } }));
+                try { globalShowToast && globalShowToast('Complex shadow button clicked', 'success'); } catch (e) { }
+            });
+
+            controls && controls.addEventListener('controls-clear', () => {
+                input && input.setValue && input.setValue('');
+                display && display.setText && display.setText('-');
+            });
+        }
+        getValue() { const input = this.shadowRoot.querySelector('cs-input'); return input && input.getValue ? input.getValue() : null; }
+        setValue(v) { const input = this.shadowRoot.querySelector('cs-input'); input && input.setValue && input.setValue(v); }
+        clickInnerButton() { const controls = this.shadowRoot.querySelector('cs-controls'); const btn = controls && controls.shadowRoot && controls.shadowRoot.getElementById('cs-btn'); btn && btn.click(); }
+    }
+
+    if (!customElements.get('complex-shadow')) customElements.define('complex-shadow', ComplexShadow);
+
+    // instantiate and expose helpers
+    const complexHost = document.getElementById('complexShadowHost');
+    if (complexHost) {
+        const cs = document.createElement('complex-shadow');
+        complexHost.appendChild(cs);
+
+        // helpers for automation scripts (proxy to sub-components)
+        window.getComplexShadowValue = () => {
+            try { const el = document.querySelector('#complexShadowHost complex-shadow'); return el ? el.getValue() : null; } catch (e) { return null; }
+        };
+        window.setComplexShadowValue = (v) => {
+            try { const el = document.querySelector('#complexShadowHost complex-shadow'); el && el.setValue(v); } catch (e) { }
+        };
+        window.clickComplexShadowButton = () => {
+            try { const el = document.querySelector('#complexShadowHost complex-shadow'); el && el.clickInnerButton && el.clickInnerButton(); } catch (e) { }
+        };
+
+        // wire UI controls to helpers
+        const readBtn = document.getElementById('readComplexShadow');
+        const setBtn = document.getElementById('setComplexShadow');
+        const setInput = document.getElementById('setComplexInput');
+        const resultEl = document.getElementById('complexShadowResult');
+        readBtn && readBtn.addEventListener('click', () => {
+            const val = window.getComplexShadowValue();
+            resultEl && (resultEl.textContent = `Result: ${val}`);
+            try { globalShowToast && globalShowToast(`Shadow value: ${val}`, 'info'); } catch (e) { }
+        });
+        setBtn && setBtn.addEventListener('click', () => {
+            const v = setInput && setInput.value ? setInput.value : '';
+            window.setComplexShadowValue(v);
+            resultEl && (resultEl.textContent = `Result: ${v}`);
+            try { globalShowToast && globalShowToast('Shadow value set', 'success'); } catch (e) { }
+        });
+
+        // listen for inner custom events
+        cs.addEventListener('shadow-action', (e) => {
+            const val = e.detail && e.detail.value;
+            const result = document.getElementById('complexShadowResult');
+            result && (result.textContent = `Last inner action: ${val}`);
+        });
+    }
+
+    // Global toast helper so other mouse handlers can use it
+    function globalShowToast(message, type = 'info') {
+        try {
+            const toastEl = document.getElementById('actionToast');
+            const toastBody = document.getElementById('actionToastBody');
+            if (!toastEl || !toastBody) return;
+            toastEl.classList.remove('text-bg-primary', 'text-bg-success', 'text-bg-info');
+            toastEl.classList.add(type === 'success' ? 'text-bg-success' : (type === 'info' ? 'text-bg-info' : 'text-bg-primary'));
+            toastBody.textContent = message;
+            const bsToast = new bootstrap.Toast(toastEl, { delay: 1800 });
+            bsToast.show();
+        } catch (e) { console.warn('globalShowToast failed', e); }
+    }
 
     // Disappearing Message
     function toggleMessage(id, show, duration = 0) {
@@ -394,12 +1358,63 @@
     // Double Click
     const doubleClickButton = document.getElementById('doubleClickButton');
     const doubleClickMessage = document.getElementById('doubleClickMessage');
-    doubleClickButton.addEventListener('dblclick', () => {
+    doubleClickButton && doubleClickButton.addEventListener('dblclick', () => {
         doubleClickMessage.classList.remove('hidden');
          setTimeout(() => {
             doubleClickMessage.classList.add('hidden');
         }, 2000);
     });
+
+    // Right Click (Context Menu)
+    const rightClickTarget = document.getElementById('rightClickTarget');
+    const contextMessage = document.getElementById('contextMessage');
+    if (rightClickTarget) {
+        rightClickTarget.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            contextMessage && contextMessage.classList.remove('hidden');
+            setTimeout(() => contextMessage && contextMessage.classList.add('hidden'), 1800);
+            console.log('contextmenu on rightClickTarget');
+            try { globalShowToast && globalShowToast('Context menu triggered', 'info'); } catch(e){}
+        });
+    }
+
+    // Click & Hold
+    const holdBtn = document.getElementById('holdBtn');
+    const holdDuration = document.getElementById('holdDuration');
+    const holdMessage = document.getElementById('holdMessage');
+    let holdStart = 0;
+    let holdInterval = null;
+    if (holdBtn) {
+        holdBtn.addEventListener('mousedown', () => {
+            holdStart = Date.now();
+            holdInterval = setInterval(() => {
+                holdDuration.textContent = Date.now() - holdStart;
+            }, 100);
+        });
+        ['mouseup', 'mouseleave'].forEach(evt => {
+            holdBtn.addEventListener(evt, () => {
+                if (holdInterval) clearInterval(holdInterval);
+                const dur = Date.now() - holdStart;
+                holdDuration.textContent = dur;
+                if (holdMessage) holdMessage.textContent = `Hold duration: ${dur}ms`;
+                console.log('hold finished', dur);
+                try { globalShowToast && globalShowToast(`Held ${dur}ms`, 'success'); } catch(e){}
+            });
+        });
+    }
+
+    // Move-to / track mouse inside area
+    const moveTarget = document.getElementById('moveTarget');
+    const moveCoords = document.getElementById('moveCoords');
+    if (moveTarget && moveCoords) {
+        moveTarget.addEventListener('mousemove', (e) => {
+            const rect = moveTarget.getBoundingClientRect();
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+            moveCoords.textContent = `${x}, ${y}`;
+        });
+        moveTarget.addEventListener('mouseleave', () => { moveCoords.textContent = '-'; });
+    }
 
     // Message Box with Character Limit
     const messageBox = document.getElementById('messageBox');
@@ -452,6 +1467,554 @@
         }, 2000);
     }
 
+    /* Window Handling */
+    (function(){
+        let childWindowRef = null;
+        const openWindowBtn = document.getElementById('openWindowBtn');
+        const openInputWindow = document.getElementById('openInputWindow');
+        const readChildTitleBtn = document.getElementById('readChildTitleBtn');
+        const closeChildWindowBtn = document.getElementById('closeChildWindowBtn');
+        const windowResult = document.getElementById('windowResult');
+
+        if (openWindowBtn) {
+            openWindowBtn.addEventListener('click', () => {
+                try {
+                    childWindowRef = window.open('', 'child_window_' + Date.now(), 'width=640,height=420');
+                    if (childWindowRef) {
+                        childWindowRef.document.write('<!doctype html><html><head><title>Child Window</title></head><body style="font-family:Inter,Arial,sans-serif;padding:12px;"><h1>Child Window</h1><p id="cwinfo">Opened at ' + new Date().toLocaleTimeString() + '</p></body></html>');
+                        childWindowRef.document.close();
+                        windowResult.textContent = `Window opened (name: ${childWindowRef.name})`;
+                    } else {
+                        windowResult.textContent = 'Popup blocked or failed';
+                    }
+                } catch (e) {
+                    windowResult.textContent = 'Error opening window';
+                }
+            });
+        }
+
+        if (openInputWindow) {
+            openInputWindow.addEventListener('click', () => {
+                const name = 'input_window_' + Date.now();
+                try {
+                    childWindowRef = window.open('', name, 'width=480,height=260');
+                    if (childWindowRef) {
+                        const html = '<!doctype html><html><head><meta charset="utf-8"><title>Input Window</title><style>body{font-family:Inter,Arial,sans-serif;padding:12px}input{width:100%;padding:.5rem;margin-bottom:.5rem}button{padding:.4rem .6rem}</style></head><body><h2>Input Window</h2><label for="cw_input">Message:</label><input id="cw_input" placeholder="Enter text"><div style="margin-top:.5rem"><button id="cw_submit">Submit</button></div><div id="cw_result" style="margin-top:.5rem;color:#2a7f2a"></div><script>document.getElementById("cw_submit").addEventListener("click",()=>{const v=document.getElementById("cw_input").value;try{window.opener&&window.opener.postMessage({type:"childMessage",value:v},"*");document.getElementById("cw_result").textContent="Sent: "+v;}catch(e){document.getElementById("cw_result").textContent="Error sending message";}});<\/script></body></html>';
+                        childWindowRef.document.write(html);
+                        childWindowRef.document.close();
+                        windowResult.textContent = 'Input window opened';
+                    } else {
+                        windowResult.textContent = 'Popup blocked or failed';
+                    }
+                } catch (e) {
+                    windowResult.textContent = 'Error opening input window';
+                }
+            });
+        }
+
+        // listen for postMessage from child window
+        window.addEventListener('message', (evt) => {
+            try {
+                const data = evt.data || {};
+                if (data && data.type === 'childMessage') {
+                    windowResult.textContent = 'Child message: ' + data.value;
+                }
+            } catch (e) { /* ignore */ }
+        });
+
+        if (readChildTitleBtn) {
+            readChildTitleBtn.addEventListener('click', () => {
+                try {
+                    if (childWindowRef && !childWindowRef.closed) {
+                        const t = childWindowRef.document.title || '(no title)';
+                        windowResult.textContent = `Child title: ${t}`;
+                    } else {
+                        windowResult.textContent = 'No open child window';
+                    }
+                } catch (e) {
+                    windowResult.textContent = 'Unable to read child title';
+                }
+            });
+        }
+
+        if (closeChildWindowBtn) {
+            closeChildWindowBtn.addEventListener('click', () => {
+                try {
+                    if (childWindowRef && !childWindowRef.closed) {
+                        childWindowRef.close();
+                        windowResult.textContent = 'Child window closed';
+                    } else {
+                        windowResult.textContent = 'No open child window';
+                    }
+                } catch (e) {
+                    windowResult.textContent = 'Error closing child window';
+                }
+            });
+        }
+
+        // expose simple helpers for automation
+        window.openChildWindow = (url) => { childWindowRef = window.open(url || '', 'child_' + Date.now()); return !!childWindowRef; };
+        window.closeChildWindow = () => { if (childWindowRef && !childWindowRef.closed) childWindowRef.close(); };
+    })();
+
+    /* Waits (delayed element & explicit wait helper) */
+    (function(){
+        const startDelayedBtn = document.getElementById('startDelayedBtn');
+        const clearDelayedBtn = document.getElementById('clearDelayedBtn');
+        const delayMsInput = document.getElementById('delayMsInput');
+        const waitArea = document.getElementById('waitArea');
+        const explicitWaitBtn = document.getElementById('explicitWaitBtn');
+        const waitSelectorInput = document.getElementById('waitSelectorInput');
+        const waitTimeoutInput = document.getElementById('waitTimeoutInput');
+        const waitResult = document.getElementById('waitResult');
+
+        function createDelayedElement(id, delay) {
+            if (!waitArea) return;
+            const existing = document.getElementById(id);
+            if (existing) existing.remove();
+            const placeholder = document.createElement('div');
+            placeholder.id = id;
+            placeholder.className = 'alert alert-secondary mt-2';
+            placeholder.textContent = `Will appear after ${delay}ms...`;
+            waitArea.appendChild(placeholder);
+            setTimeout(() => {
+                if (document.getElementById(id)) {
+                    placeholder.textContent = `Element ${id} appeared @ ${new Date().toLocaleTimeString()}`;
+                    placeholder.className = 'alert alert-success mt-2';
+                }
+            }, delay);
+        }
+
+        if (startDelayedBtn) {
+            startDelayedBtn.addEventListener('click', () => {
+                const d = parseInt(delayMsInput.value || '2000', 10);
+                createDelayedElement('delayedEl', d);
+                waitResult.textContent = 'Started delayed element';
+            });
+        }
+
+        if (clearDelayedBtn) {
+            clearDelayedBtn.addEventListener('click', () => {
+                const e = document.getElementById('delayedEl');
+                e && e.remove();
+                waitResult.textContent = 'Cleared delayed element';
+            });
+        }
+
+        function waitForElement(selector, timeout = 5000, interval = 200) {
+            return new Promise((resolve, reject) => {
+                const end = Date.now() + timeout;
+                (function poll() {
+                    const el = document.querySelector(selector);
+                    if (el) return resolve(el);
+                    if (Date.now() > end) return reject(new Error('Timeout waiting for ' + selector));
+                    setTimeout(poll, interval);
+                })();
+            });
+        }
+        window.waitForElement = waitForElement; // expose helper for automation scripts
+
+        if (explicitWaitBtn) {
+            explicitWaitBtn.addEventListener('click', () => {
+                const sel = waitSelectorInput.value || '#delayedEl';
+                const timeout = parseInt(waitTimeoutInput.value || '5000', 10);
+                waitResult.textContent = `Waiting for ${sel}…`;
+                waitForElement(sel, timeout).then(el => {
+                    waitResult.textContent = `Found ${sel} at ${new Date().toLocaleTimeString()}`;
+                    try { globalShowToast && globalShowToast(`Found ${sel}`, 'success'); } catch(e){}
+                }).catch(err => {
+                    waitResult.textContent = `Timeout waiting for ${sel}`;
+                    try { globalShowToast && globalShowToast(`Timeout ${sel}`, 'info'); } catch(e){}
+                });
+            });
+        }
+    })();
+
+    /* Feature scripts: File uploads, download, simulated network, modal, progress, sortable lists, web table */
+    (function(){
+        /* File Uploads */
+        
+        /* Web Table: data generation, paging, search, helpers */
+        (function(){
+            const dataTable = document.getElementById('dataTable');
+            const tableBody = dataTable && dataTable.querySelector('tbody');
+            const pageSizeSelect = document.getElementById('pageSizeSelect');
+            const tableSearch = document.getElementById('tableSearch');
+            const firstPageBtn = document.getElementById('firstPageBtn');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const lastPageBtn = document.getElementById('lastPageBtn');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const pageInfo = document.getElementById('tableInfo');
+            const gotoPageInputBtn = document.getElementById('gotoPageInputBtn');
+
+            // sample data generator
+            function makeData(count=53) {
+                const roles = ['Admin','Editor','Viewer'];
+                const out = [];
+                for (let i=1;i<=count;i++) {
+                    out.push({ id: i, name: `User ${i}`, email: `user${i}@example.com`, role: roles[i%roles.length] });
+                }
+                return out;
+            }
+
+            let tableData = makeData(53);
+            let currentPage = 1;
+            let currentSize = parseInt(pageSizeSelect && pageSizeSelect.value,10) || 10;
+
+            function renderTable() {
+                if (!tableBody) return;
+                const q = tableSearch && tableSearch.value && tableSearch.value.trim().toLowerCase();
+                const filtered = q ? tableData.filter(r => (r.name + ' ' + r.email).toLowerCase().includes(q)) : tableData.slice();
+                const total = filtered.length;
+                const pages = Math.max(1, Math.ceil(total / currentSize));
+                if (currentPage > pages) currentPage = pages;
+                const start = (currentPage-1)*currentSize;
+                const pageRows = filtered.slice(start, start+currentSize);
+                tableBody.innerHTML = pageRows.map(r => `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.email}</td><td>${r.role}</td></tr>`).join('');
+                pageIndicator.textContent = `Page ${currentPage} / ${pages}`;
+                pageInfo.textContent = `Showing ${start+1} — ${start + pageRows.length} of ${total} items`;
+            }
+
+            function gotoPage(n) { currentPage = Math.max(1, n); renderTable(); }
+            function nextPage() { gotoPage(currentPage+1); }
+            function prevPage() { gotoPage(currentPage-1); }
+            function firstPage() { gotoPage(1); }
+            function lastPage() { const q = tableSearch && tableSearch.value && tableSearch.value.trim().toLowerCase(); const total = q ? tableData.filter(r => (r.name + ' ' + r.email).toLowerCase().includes(q)).length : tableData.length; const pages = Math.max(1, Math.ceil(total / currentSize)); gotoPage(pages); }
+
+            pageSizeSelect && pageSizeSelect.addEventListener('change', (e) => { currentSize = parseInt(e.target.value,10); currentPage = 1; renderTable(); });
+            tableSearch && tableSearch.addEventListener('input', () => { currentPage = 1; renderTable(); });
+            firstPageBtn && firstPageBtn.addEventListener('click', firstPage);
+            prevPageBtn && prevPageBtn.addEventListener('click', prevPage);
+            nextPageBtn && nextPageBtn.addEventListener('click', nextPage);
+            lastPageBtn && lastPageBtn.addEventListener('click', lastPage);
+            gotoPageInputBtn && gotoPageInputBtn.addEventListener('click', () => {
+                const p = prompt('Enter page number','1');
+                const n = parseInt(p,10);
+                if (!isNaN(n)) gotoPage(n);
+            });
+
+            // expose helpers for automation scripts
+            window.getTablePage = () => {
+                const rows = Array.from(tableBody.querySelectorAll('tr')).map(tr => Array.from(tr.children).map(td => td.textContent.trim()));
+                return { page: currentPage, size: currentSize, rows };
+            };
+            window.gotoPage = (n) => { gotoPage(parseInt(n,10)||1); };
+            window.setPageSize = (s) => { pageSizeSelect.value = String(s); pageSizeSelect.dispatchEvent(new Event('change')); };
+
+            // init
+            renderTable();
+        })();
+
+        /* File Uploads */
+        const singleFileInput = document.getElementById('singleFileInput');
+        const singleFilePreview = document.getElementById('singleFilePreview');
+        const singleClearBtn = document.getElementById('singleClearBtn');
+
+        const multiFileInput = document.getElementById('multiFileInput');
+        const multiFileList = document.getElementById('multiFileList');
+        const multiClearBtn = document.getElementById('multiClearBtn');
+
+        if (singleFileInput) {
+            singleFileInput.addEventListener('change', (e) => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) { singleFilePreview.textContent = 'No file selected'; return; }
+                if (f.type && f.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        singleFilePreview.innerHTML = `<div><img src="${ev.target.result}" style="max-width:120px;max-height:90px;border:1px solid #ddd;padding:2px"/></div><div class="mt-1">${f.name} (${Math.round(f.size/1024)} KB)</div>`;
+                    };
+                    reader.readAsDataURL(f);
+                } else {
+                    singleFilePreview.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+                }
+            });
+            singleClearBtn && singleClearBtn.addEventListener('click', () => { singleFileInput.value = ''; singleFilePreview.textContent = 'No file selected'; document.getElementById('singleUploadResult') && (document.getElementById('singleUploadResult').classList.add('hidden')); });
+        }
+
+        // Single file upload simulation
+        const singleUploadBtn = document.getElementById('singleUploadBtn');
+        const singleUploadResult = document.getElementById('singleUploadResult');
+        if (singleUploadBtn) {
+            singleUploadBtn.addEventListener('click', () => {
+                const f = singleFileInput.files && singleFileInput.files[0];
+                if (!f) { singleUploadResult.textContent = 'No file selected'; singleUploadResult.classList.remove('hidden'); singleUploadResult.classList.remove('text-success'); singleUploadResult.classList.add('text-danger'); return; }
+                singleUploadResult.textContent = 'Uploading...'; singleUploadResult.classList.remove('hidden'); singleUploadResult.classList.remove('text-danger'); singleUploadResult.classList.remove('text-success');
+                setTimeout(() => {
+                    singleUploadResult.textContent = `Uploaded: ${f.name} (${Math.round(f.size/1024)} KB)`;
+                    singleUploadResult.classList.remove('text-danger'); singleUploadResult.classList.add('text-success');
+                    try { globalShowToast && globalShowToast('Upload successful', 'success'); } catch(e) {}
+                }, 1000);
+            });
+        }
+
+        if (multiFileInput) {
+            multiFileInput.addEventListener('change', (e) => {
+                const files = e.target.files || [];
+                if (!files.length) { multiFileList.textContent = 'No files selected'; return; }
+                const names = Array.from(files).map(f => `${f.name} (${Math.round(f.size/1024)} KB)`);
+                multiFileList.innerHTML = `<ul class="mb-0 small">${names.map(n => `<li>${n}</li>`).join('')}</ul>`;
+            });
+            multiClearBtn && multiClearBtn.addEventListener('click', () => { multiFileInput.value = ''; multiFileList.textContent = 'No files selected'; document.getElementById('multiUploadResult') && (document.getElementById('multiUploadResult').classList.add('hidden')); });
+        }
+
+        // Multi file upload simulation
+        const multiUploadBtn = document.getElementById('multiUploadBtn');
+        const multiUploadResult = document.getElementById('multiUploadResult');
+        if (multiUploadBtn) {
+            multiUploadBtn.addEventListener('click', () => {
+                const files = multiFileInput.files || [];
+                if (!files.length) { multiUploadResult.textContent = 'No files selected'; multiUploadResult.classList.remove('hidden'); multiUploadResult.classList.remove('text-success'); multiUploadResult.classList.add('text-danger'); return; }
+                multiUploadResult.textContent = `Uploading ${files.length} file(s)...`; multiUploadResult.classList.remove('hidden'); multiUploadResult.classList.remove('text-danger'); multiUploadResult.classList.remove('text-success');
+                setTimeout(() => {
+                    const names = Array.from(files).map(f => f.name).join(', ');
+                    multiUploadResult.textContent = `Uploaded: ${names}`;
+                    multiUploadResult.classList.remove('text-danger'); multiUploadResult.classList.add('text-success');
+                    try { globalShowToast && globalShowToast('Upload successful', 'success'); } catch(e) {}
+                }, 1200);
+            });
+        }
+
+        /* File Download */
+        const downloadSampleBtn = document.getElementById('downloadSampleBtn');
+        const downloadResult = document.getElementById('downloadResult');
+        if (downloadSampleBtn) {
+            downloadSampleBtn.addEventListener('click', () => {
+                const content = 'Sample text file generated at ' + new Date().toLocaleString();
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'sample.txt'; document.body.appendChild(a); a.click(); a.remove();
+                URL.revokeObjectURL(url);
+                downloadResult.textContent = 'Downloaded sample.txt';
+            });
+        }
+
+        /* Simulated Network */
+        const fetchDelayedBtn = document.getElementById('fetchDelayedBtn');
+        const fetchDelayInput = document.getElementById('fetchDelayInput');
+        const fetchResult = document.getElementById('fetchResult');
+        if (fetchDelayedBtn) {
+            fetchDelayedBtn.addEventListener('click', () => {
+                const d = parseInt(fetchDelayInput.value || '1500', 10);
+                fetchResult.textContent = 'Fetching...';
+                setTimeout(() => {
+                    const json = { msg: 'Hello from server', ts: new Date().toLocaleTimeString() };
+                    fetchResult.textContent = `Result: ${json.msg} @ ${json.ts}`;
+                    try { globalShowToast && globalShowToast('Fetch completed', 'success'); } catch(e){}
+                }, d);
+            });
+        }
+
+        /* Modal */
+        const openModalBtn = document.getElementById('openModalBtn');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalInput = document.getElementById('modalInput');
+        const modalResult = document.getElementById('modalResult');
+        let sampleModalInstance = null;
+        if (openModalBtn) {
+            const modalEl = document.getElementById('sampleModal');
+            sampleModalInstance = new bootstrap.Modal(modalEl, {});
+            openModalBtn.addEventListener('click', () => sampleModalInstance.show());
+        }
+        if (modalConfirmBtn) {
+            modalConfirmBtn.addEventListener('click', () => {
+                modalResult.textContent = 'Last action: ' + (modalInput && modalInput.value ? modalInput.value : '(empty)');
+                try { sampleModalInstance.hide(); } catch(e){}
+            });
+        }
+
+        /* Progress / Cancellable Task */
+        const startTaskBtn = document.getElementById('startTaskBtn');
+        const cancelTaskBtn = document.getElementById('cancelTaskBtn');
+        const taskProgress = document.getElementById('taskProgress');
+        const taskMessage = document.getElementById('taskMessage');
+        let taskInterval = null;
+        if (startTaskBtn) {
+            startTaskBtn.addEventListener('click', () => {
+                let p = 0; taskProgress.style.width = '0%'; taskProgress.textContent = '0%';
+                taskMessage.textContent = 'Running...';
+                if (taskInterval) clearInterval(taskInterval);
+                taskInterval = setInterval(() => {
+                    p += Math.floor(Math.random()*8) + 4; if (p > 100) p = 100;
+                    taskProgress.style.width = p + '%'; taskProgress.textContent = p + '%';
+                    if (p >= 100) { clearInterval(taskInterval); taskInterval = null; taskMessage.textContent = 'Completed'; try { globalShowToast && globalShowToast('Task completed', 'success'); } catch(e){} }
+                }, 300);
+            });
+        }
+        if (cancelTaskBtn) {
+            cancelTaskBtn.addEventListener('click', () => {
+                if (taskInterval) { clearInterval(taskInterval); taskInterval = null; taskProgress.style.width = '0%'; taskProgress.textContent = '0%'; taskMessage.textContent = 'Canceled'; try { globalShowToast && globalShowToast('Task canceled', 'info'); } catch(e){} }
+            });
+        }
+
+        /* Sortable Lists: basic drag and drop */
+        const listA = document.getElementById('listA');
+        const listB = document.getElementById('listB');
+        const sortResult = document.getElementById('sortResult');
+        let dragId = null;
+        function enableDrag(container) {
+            container && container.addEventListener('dragstart', (e) => { dragId = e.target && e.target.id; e.dataTransfer.setData('text/plain', dragId); });
+            container && container.addEventListener('dragover', (e) => { e.preventDefault(); });
+            container && container.addEventListener('drop', (e) => {
+                e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); const el = document.getElementById(id);
+                if (el && container !== el.parentElement) { container.appendChild(el); sortResult.textContent = `Moved ${id} to ${container.id}`; }
+            });
+        }
+        enableDrag(listA); enableDrag(listB);
+
+        /* Helper for automation: find element by data-test attribute */
+        window.findByDataTest = (name) => {
+            if (!name) return null;
+            try { return document.querySelector(`[data-test="${name}"]`) || document.querySelector(name); } catch(e){ return null; }
+        };
+
+    })();
+
+    /* Dynamic Web Table Logic */
+    (function() {
+        const table = document.getElementById('dynTable');
+        if (!table) return;
+        const tbody = table.querySelector('tbody');
+        const addBtn = document.getElementById('dynAddBtn');
+        const addManyBtn = document.getElementById('dynAddManyBtn');
+        const removeSelBtn = document.getElementById('dynRemoveSelBtn');
+        const selectAll = document.getElementById('dynSelectAll');
+        const info = document.getElementById('dynTableInfo');
+
+        let rowId = 1;
+
+        function updateInfo() {
+            const count = tbody.querySelectorAll('tr').length;
+            if (info) info.textContent = `Rows: ${count}`;
+        }
+
+        function createRow() {
+            const tr = document.createElement('tr');
+            const id = rowId++;
+            const roles = ['Admin', 'Editor', 'Viewer', 'Guest'];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            
+            tr.innerHTML = `
+                <td><input type="checkbox" class="dyn-select" aria-label="select row"></td>
+                <td>${id}</td>
+                <td>User ${id}</td>
+                <td>user${id}@example.com</td>
+                <td>${role}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary dyn-edit">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger dyn-delete ms-1">Delete</button>
+                </td>
+            `;
+            return tr;
+        }
+
+        function addRow() {
+            tbody.appendChild(createRow());
+            updateInfo();
+        }
+
+        if (addBtn) addBtn.addEventListener('click', addRow);
+        
+        if (addManyBtn) addManyBtn.addEventListener('click', () => {
+            for(let i=0; i<5; i++) tbody.appendChild(createRow());
+            updateInfo();
+        });
+
+        if (removeSelBtn) removeSelBtn.addEventListener('click', () => {
+            const checked = tbody.querySelectorAll('.dyn-select:checked');
+            checked.forEach(cb => cb.closest('tr').remove());
+            if (selectAll) selectAll.checked = false;
+            updateInfo();
+        });
+
+        if (selectAll) selectAll.addEventListener('change', (e) => {
+            const checkboxes = tbody.querySelectorAll('.dyn-select');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        // Event delegation for Edit/Save/Delete
+        tbody.addEventListener('click', (e) => {
+            const target = e.target;
+            const tr = target.closest('tr');
+            if (!tr) return;
+
+            if (target.classList.contains('dyn-delete')) {
+                tr.remove();
+                updateInfo();
+            } else if (target.classList.contains('dyn-edit')) {
+                // Switch to edit mode
+                const cells = tr.querySelectorAll('td');
+                // cells[2] = Name, cells[3] = Email, cells[4] = Role
+                const name = cells[2].textContent;
+                const email = cells[3].textContent;
+                const role = cells[4].textContent;
+
+                cells[2].innerHTML = `<input class="form-control form-control-sm" value="${name}">`;
+                cells[3].innerHTML = `<input class="form-control form-control-sm" value="${email}">`;
+                cells[4].innerHTML = `<input class="form-control form-control-sm" value="${role}">`;
+
+                target.textContent = 'Save';
+                target.classList.remove('btn-outline-secondary', 'dyn-edit');
+                target.classList.add('btn-success', 'dyn-save');
+            } else if (target.classList.contains('dyn-save')) {
+                // Save changes
+                const cells = tr.querySelectorAll('td');
+                const nameInput = cells[2].querySelector('input');
+                const emailInput = cells[3].querySelector('input');
+                const roleInput = cells[4].querySelector('input');
+
+                if (nameInput) cells[2].textContent = nameInput.value;
+                if (emailInput) cells[3].textContent = emailInput.value;
+                if (roleInput) cells[4].textContent = roleInput.value;
+
+                target.textContent = 'Edit';
+                target.classList.remove('btn-success', 'dyn-save');
+                target.classList.add('btn-outline-secondary', 'dyn-edit');
+            }
+        });
+    })();
+
+    // Country Search Dropdown
+    (function() {
+        const input = document.getElementById('countrySearch');
+        const list = document.getElementById('countryList');
+        const result = document.getElementById('countryResult');
+        const countries = ["United States", "India", "United Kingdom", "Canada", "Australia", "Germany", "France", "China", "Japan", "Brazil", "South Africa", "Mexico", "Italy", "Spain", "Netherlands", "Sweden", "Switzerland", "New Zealand", "Singapore", "Russia", "South Korea", "Argentina", "Belgium", "Norway", "Denmark", "Finland", "Ireland", "Portugal", "Greece", "Turkey", "Thailand", "Vietnam", "Malaysia", "Indonesia", "Philippines"];
+
+        if (!input || !list) return;
+
+        function renderList(filter = "") {
+            list.innerHTML = "";
+            const q = filter.toLowerCase();
+            const filtered = countries.filter(c => c.toLowerCase().includes(q));
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="list-group-item text-muted">No countries found</div>';
+            } else {
+                filtered.forEach(c => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = c;
+                    item.addEventListener('click', () => {
+                        input.value = c;
+                        list.style.display = 'none';
+                        if (result) result.textContent = `Selected: ${c}`;
+                    });
+                    list.appendChild(item);
+                });
+            }
+            list.style.display = 'block';
+        }
+
+        input.addEventListener('input', (e) => renderList(e.target.value));
+        input.addEventListener('focus', () => renderList(input.value));
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !list.contains(e.target)) list.style.display = 'none';
+        });
+    })();
+
     // Login
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', (event) => {
@@ -461,8 +2024,10 @@
         const messageElement = document.getElementById('loginMessage');
 
         if (usernameInput.value === 'admin' && passwordInput.value === 'password') {
-            messageElement.textContent = 'Login successful!';
-            messageElement.className = 'alert alert-success mt-2';
+            // Redirect to a dedicated success page and pass username
+            const user = encodeURIComponent(usernameInput.value);
+            window.location.href = `login_success.html?user=${user}`;
+            return; // don't run the success message block here
         } else {
             messageElement.textContent = 'Login failed. Invalid credentials.';
             messageElement.className = 'alert alert-danger mt-2';
@@ -471,6 +2036,19 @@
          setTimeout(() => {
              messageElement.classList.add('hidden');
         }, 3000);
+    });
+
+    // Bootstrap Dropdown
+    const bootstrapDropdownButton = document.getElementById('bootstrapDropdown');
+    const bootstrapDropdownMenu = document.getElementById('bootstrapDropdownMenu');
+
+    bootstrapDropdownMenu.addEventListener('click', (event) => {
+        if (event.target.classList.contains('dropdown-item')) {
+            event.preventDefault(); // Prevent default link behavior
+            const selectedText = event.target.textContent;
+            bootstrapDropdownButton.textContent = selectedText;
+            bootstrapDropdownButton.setAttribute('aria-expanded', 'false'); // Close dropdown visually
+        }
     });
 
     // Bootstrap Multi-Select Dropdown
@@ -484,6 +2062,7 @@
     bootstrapMultiSelect.addEventListener('click', () => {
         isDropdownOpen = !isDropdownOpen;
         bootstrapMultiSelectMenu.classList.toggle('show', isDropdownOpen);
+        bootstrapMultiSelect.setAttribute('aria-expanded', String(isDropdownOpen));
     });
 
     bootstrapMultiSelectMenu.addEventListener('click', (event) => {
@@ -537,6 +2116,101 @@
         }
     }
 
+    // Multi-level menu selection handler
+    window.selectMenu = function(value) {
+        const display = document.getElementById('menuSelectedValue');
+        if (display) {
+            display.textContent = value;
+            try { globalShowToast && globalShowToast(`Menu selected: ${value}`, 'success'); } catch(e){}
+        }
+
+        // Close menu on selection by temporarily disabling hover
+        const e = window.event;
+        if (e && e.target) {
+            const topLi = e.target.closest('.dropdown-hover');
+            if (topLi) {
+                topLi.classList.add('force-hide');
+                const onLeave = () => {
+                    topLi.classList.remove('force-hide');
+                    topLi.removeEventListener('mouseleave', onLeave);
+                };
+                topLi.addEventListener('mouseleave', onLeave);
+            }
+        }
+    };
+
+    // Selection Controls — update displays for radios & checkboxes
+    (function(){
+        const radioSelection = document.getElementById('radioSelection');
+        const checkboxSelection = document.getElementById('checkboxSelection');
+
+        function updateRadio() {
+            const sel = document.querySelector('input[name="inlineRadioOptions"]:checked');
+            if (radioSelection) radioSelection.textContent = `Selected: ${sel ? sel.value : '-'}`;
+            try { sel && globalShowToast && globalShowToast(`Radio selected: ${sel.value}`, 'info'); } catch(e){}
+        }
+
+        function updateCheckboxes() {
+            const checked = Array.from(document.querySelectorAll('#inlineCheckbox1,#inlineCheckbox2')).filter(i => i.checked).map(i => i.value || i.id);
+            if (checkboxSelection) checkboxSelection.textContent = `Selected: ${checked.length ? checked.join(', ') : '-'}`;
+            try { checked.length && globalShowToast && globalShowToast(`Checkboxes: ${checked.join(', ')}`, 'info'); } catch(e){}
+        }
+
+        document.querySelectorAll('input[name="inlineRadioOptions"]').forEach(r => r.addEventListener('change', updateRadio));
+        document.querySelectorAll('#inlineCheckbox1,#inlineCheckbox2').forEach(ch => ch.addEventListener('change', updateCheckboxes));
+        // initialize
+        updateRadio(); updateCheckboxes();
+    })();
+
+    // Date picker and range handlers
+    const datePicker = document.getElementById('datePicker');
+    const dateDisplay = document.getElementById('dateDisplay');
+    const fromDate = document.getElementById('fromDate');
+    const toDate = document.getElementById('toDate');
+    const applyDateRange = document.getElementById('applyDateRange');
+    const clearDateRange = document.getElementById('clearDateRange');
+    const dateRangeResult = document.getElementById('dateRangeResult');
+
+    if (datePicker && dateDisplay) {
+        datePicker.addEventListener('change', () => {
+            const v = datePicker.value;
+            dateDisplay.textContent = v ? `Selected: ${new Date(v).toLocaleDateString()}` : 'Selected: none';
+            try { globalShowToast && globalShowToast(`Selected ${v}`, 'info'); } catch (e) {}
+        });
+    }
+
+    function parseDate(val) { return val ? new Date(val) : null; }
+    function formatDate(d) { return d ? d.toLocaleDateString() : '-'; }
+
+    if (applyDateRange && fromDate && toDate && dateRangeResult) {
+        applyDateRange.addEventListener('click', () => {
+            const f = parseDate(fromDate.value);
+            const t = parseDate(toDate.value);
+            if (!f || !t) {
+                dateRangeResult.textContent = 'Range: incomplete';
+                try { globalShowToast && globalShowToast('Select both from and to dates', 'info'); } catch (e) {}
+                return;
+            }
+            if (f > t) {
+                dateRangeResult.textContent = 'Range: invalid (From > To)';
+                try { globalShowToast && globalShowToast('From date must be earlier than To date', 'info'); } catch (e) {}
+                return;
+            }
+            const diffDays = Math.round((t - f) / (1000 * 60 * 60 * 24));
+            dateRangeResult.textContent = `Range: ${formatDate(f)} — ${formatDate(t)} (${diffDays} days)`;
+            try { globalShowToast && globalShowToast(`Applied range ${formatDate(f)} to ${formatDate(t)}`, 'success'); } catch (e) {}
+        });
+    }
+
+    if (clearDateRange) {
+        clearDateRange.addEventListener('click', () => {
+            if (fromDate) fromDate.value = '';
+            if (toDate) toDate.value = '';
+            if (dateRangeResult) dateRangeResult.textContent = 'Range: -';
+            try { globalShowToast && globalShowToast('Range cleared', 'info'); } catch (e) {}
+        });
+    }
+
     // Example usage: get values on button click
     const simpleButton = document.getElementById('simpleButton'); // Assuming you want to use the existing button
     simpleButton.addEventListener('click', () => {
@@ -561,6 +2235,101 @@
             Password: ${passwordValue}
         `);
     });
+
+    // Dynamic Controls — attach handlers after DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        const dynamicBtn = document.getElementById('dynamicBtn');
+        const dynamicText = document.getElementById('dynamicText');
+        const dynamicInput = document.getElementById('dynamicInput');
+        let dynamicCount = 0;
+
+        // Toast helper with type support (e.g., 'info', 'success')
+        function showToast(message, type = 'info') {
+            try {
+                const toastEl = document.getElementById('actionToast');
+                const toastBody = document.getElementById('actionToastBody');
+                if (!toastEl || !toastBody) return;
+                // adjust color
+                toastEl.classList.remove('text-bg-primary', 'text-bg-success', 'text-bg-info');
+                toastEl.classList.add(type === 'success' ? 'text-bg-success' : (type === 'info' ? 'text-bg-info' : 'text-bg-primary'));
+                toastBody.textContent = message;
+                const bsToast = new bootstrap.Toast(toastEl, { delay: 1800 });
+                bsToast.show();
+            } catch (e) { console.warn('Toast failed', e); }
+        }
+
+        console.log('Dynamic Controls init', { dynamicBtn: !!dynamicBtn, dynamicText: !!dynamicText, dynamicInput: !!dynamicInput });
+
+        if (dynamicBtn && dynamicText) {
+            dynamicBtn.addEventListener('click', () => {
+                dynamicCount++;
+                const custom = dynamicInput && dynamicInput.value ? dynamicInput.value : null;
+                const text = custom ? `${custom} (clicked ${dynamicCount}×)` : `Button clicked ${dynamicCount} time${dynamicCount>1?'s':''} — ${new Date().toLocaleTimeString()}`;
+                dynamicText.textContent = text;
+                dynamicBtn.classList.toggle('btn-success', dynamicCount % 2 === 0);
+                dynamicBtn.classList.toggle('btn-outline-primary', dynamicCount % 2 !== 0);
+                console.log('dynamicBtn clicked:', { count: dynamicCount, text });
+                showToast(text, 'info');
+            });
+        } else {
+            console.warn('dynamicBtn handlers not attached (elements missing)');
+        }
+
+        // Toggle button: changes label and updates a dynamic counter value
+        const toggleBtn = document.getElementById('toggleBtn');
+        const toggleValue = document.getElementById('toggleValue');
+        const toggleDisplay = document.getElementById('toggleDisplay');
+        let toggleCounter = 0;
+
+        console.log('Toggle Controls init', { toggleBtn: !!toggleBtn, toggleValue: !!toggleValue, toggleDisplay: !!toggleDisplay });
+
+        if (toggleBtn && toggleValue && toggleDisplay) {
+            toggleBtn.addEventListener('click', () => {
+                // flip state
+                const isOn = toggleBtn.getAttribute('data-state') === 'on';
+                const newState = isOn ? 'off' : 'on';
+                toggleBtn.setAttribute('data-state', newState);
+                toggleBtn.textContent = `Toggle: ${newState.toUpperCase()}`;
+                toggleBtn.classList.toggle('btn-success', newState === 'on');
+                toggleBtn.classList.toggle('btn-secondary', newState === 'off');
+
+                // update numeric value
+                toggleCounter += 1;
+                toggleValue.value = toggleCounter;
+                toggleDisplay.textContent = `Value: ${toggleCounter}`;
+                console.log('toggleBtn clicked:', { state: newState, value: toggleCounter });
+                showToast(`Toggled ${newState.toUpperCase()} — ${toggleCounter}`, newState === 'on' ? 'success' : 'info');
+            });
+        } else {
+            console.warn('toggleBtn handlers not attached (elements missing)');
+        }
+    });
+
+    // Start button demo: auto-fill login and open hints
+    (function(){
+        const startBtn = document.getElementById('startBtn');
+        startBtn && startBtn.addEventListener('click', () => {
+            const u = document.getElementById('username');
+            const p = document.getElementById('password');
+            const loginForm = document.getElementById('loginForm');
+
+            if (u && p) {
+                u.value = 'admin';
+                p.value = 'password';
+                // flash login area for feedback
+                loginForm.classList.add('border', 'border-success');
+                setTimeout(() => loginForm.classList.remove('border', 'border-success'), 1200);
+                // trigger submit to show message
+                loginForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }
+
+            setTimeout(() => {
+                const hintsEl = document.getElementById('hintsCanvas');
+                try { new bootstrap.Offcanvas(hintsEl).show(); }
+                catch (e) { hintsEl.classList.add('show'); }
+            }, 500);
+        });
+    })();
 </script>
 </body>
 </html>
