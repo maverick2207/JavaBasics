@@ -224,6 +224,7 @@
       <li><span class="hint-badge">#rightClickTarget</span> — Right click / context menu</li>
       <li><span class="hint-badge">#holdBtn</span> / <span class="hint-badge">#holdDuration</span> — Press & hold (duration)</li>
       <li><span class="hint-badge">#moveTarget</span> / <span class="hint-badge">#moveCoords</span> — Move-to / mouse coordinates</li>
+      <li><span class="hint-badge">#priceRange</span> / <span class="hint-badge">#priceValue</span> — Range Slider</li>
       <li><span class="hint-badge">#inlineRadio1</span> / <span class="hint-badge">#inlineRadio2</span> — Radio buttons</li>
       <li><span class="hint-badge">#inlineCheckbox1</span> / <span class="hint-badge">#inlineCheckbox2</span> — Checkboxes</li>
       <li><span class="hint-badge">#shadowHost</span> — Simple Shadow Host (see inner content)</li>
@@ -599,11 +600,6 @@
     </div>
   </div>
 </div> 
-                <label class="form-check-label" for="inlineCheckbox2">Checkbox 2</label>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -649,6 +645,13 @@
           </div>
         </div>
 
+        <div class="row g-3 mt-3">
+          <div class="col-md-4">
+            <h3 class="h6 mb-1">Range Slider</h3>
+            <label for="priceRange" class="form-label">Set value (0-100): <span id="priceValue" class="fw-bold">50</span></label>
+            <input type="range" class="form-range" id="priceRange" min="0" max="100" value="50">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1414,6 +1417,15 @@
             moveCoords.textContent = `${x}, ${y}`;
         });
         moveTarget.addEventListener('mouseleave', () => { moveCoords.textContent = '-'; });
+    }
+
+    // Range Slider
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    if (priceRange && priceValue) {
+        priceRange.addEventListener('input', (e) => {
+            priceValue.textContent = e.target.value;
+        });
     }
 
     // Message Box with Character Limit
