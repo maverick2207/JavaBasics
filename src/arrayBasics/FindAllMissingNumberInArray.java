@@ -14,7 +14,7 @@ public class FindAllMissingNumberInArray {
 
         int [] arr2 = new int[arr[l-1]+1];
 
-        for(int i = 0;i<l;i++){
+        for(int i = 0;i < l;i++){
 
             arr2[arr[i]]=1;
         }
