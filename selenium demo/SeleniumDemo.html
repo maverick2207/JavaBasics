@@ -306,6 +306,11 @@
     .dropdown-hover.force-hide>.dropdown-menu {
       display: none;
     }
+
+    #countryCodeDropdownMenu {
+      max-height: 200px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 
@@ -377,6 +382,7 @@
         <li><span class="hint-badge">#linkPlaywright</span> — Playwright Link</li>
         <li><span class="hint-badge">#registerForm</span> — Registration Form</li>
         <li><span class="hint-badge">#contactForm</span> — Contact Form (Ajax)</li>
+        <li><span class="hint-badge">#employeeTable</span> — Real-time Employee Status Table</li>
       </ul>
     </div>
   </div>
@@ -635,19 +641,6 @@
                 </div>
               </div>
               <!-- Multi-Select Dropdown -->
-              <!-- <div class="col-md-3">
-                <div class="form-group">
-                  <label for="multiSelect">Multi-Select Dropdown:</label>
-                  <select id="multiSelect" class="form-select" multiple aria-label="Multiple select example">
-                    <option value="apple">Apple</option>
-                    <option value="banana">Banana</option>
-                    <option value="cherry">Cherry</option>
-                    <option value="date">Date</option>
-                    <option value="kiwi">Kiwi</option>
-                    <option value="orange">Orange</option>
-                  </select>
-                </div>
-              </div> -->
               <div class="col-md-3">
                 <div class="form-group">
                   <!-- <label for="multiSelect">Preferred Fruits</label> -->
@@ -691,24 +684,7 @@
               </div>
 
               <!-- Combobox Dropdown -->
-              <!-- <div class="col-md-3">
-                <div class="form-group">
-                  <label for="bootstrapDropdown">Bootstrap Dropdown:</label>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="bootstrapDropdown"
-                      data-bs-toggle="dropdown" aria-expanded="true">
-                      Choose Option
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="bootstrapDropdown" id="bootstrapDropdownMenu">
-                      <li><a class="dropdown-item" href="#">Bootstrap Option 1</a></li>
-                      <li><a class="dropdown-item" href="#">Bootstrap Option 2</a></li>
-                      <li><a class="dropdown-item" href="#">Bootstrap Option 3</a></li>
-                      <li><a class="dropdown-item" href="#">Bootstrap Option 4</a></li>
-                      <li><a class="dropdown-item" href="#">Bootstrap Option 5</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
+              
               <div class="col-md-3">
                 <div class="form-group">
 
@@ -747,45 +723,7 @@
               </div>
 
               <!-- Bootstrap Multi-Select Dropdown -->
-              <!-- <div class="col-md-3">
-                <div class="form-group">
-                  <label for="bootstrapMultiSelect">Bootstrap Multi-Select Dropdown</label>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="bootstrapMultiSelect"
-                      data-bs-toggle="dropdown" aria-expanded="false" aria-controls="bootstrapMultiSelectMenu">
-                      Choose Options
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="bootstrapMultiSelect" id="bootstrapMultiSelectMenu">
-                      <label class="dropdown-item">
-                        <input type="checkbox" value="option1"> Option 1
-                      </label>
-                      <label class="dropdown-item">
-                        <input type="checkbox" value="option2"> Option 2
-                      </label>
-                      <label class="dropdown-item">
-                        <input type="checkbox" value="option3"> Option 3
-                      </label>
-                      <label class="dropdown-item">
-                        <input type="checkbox" value="option4"> Option 4
-                      </label>
-                      <label class="dropdown-item">
-                        <input type="checkbox" value="option5"> Option 5
-                      </label>
-                    </div>
-                    <select id="bootstrapMultiSelectSelect" class="form-select" multiple style="display: none;"
-                      title="Hidden multi-select mirror for accessibility"
-                      aria-label="Bootstrap multi-select hidden mirror">
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                      <option value="option4">Option 4</option>
-                      <option value="option5">Option 5</option>
-                    </select>
-                    <div id="bootstrapMultiSelectValues" class="mt-2"></div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
+              
               <div class="col-md-3">
                 <div class="form-group">
 
@@ -868,7 +806,11 @@
               <!-- Searchable Country Dropdown -->
               <div class="row mt-3">
                 <div class="col-md-6">
-                  <label for="countrySearch" class="form-label">Select Country (Searchable & Scrollable):</label>
+                  <label for="countrySearch" class="form-label">Searchable & Scrollable Dropdown:</label>
+                  <!-- Sub label -->
+                  <div class="form-text mb-1">
+                    Select Country
+                  </div>
                   <div class="position-relative">
                     <input type="text" class="form-control" id="countrySearch"
                       placeholder="Start typing country name..." autocomplete="off">
@@ -883,80 +825,7 @@
         </div>
 
         <!-- Multi-Level Hover Menu -->
-        <!-- <div class="row">
-          <div class="col-12">
-            <div class="card card-slim mb-3" id="hoverMenu" role="region" aria-labelledby="hoverMenuLabel">
-              <div class="card-body">
-                <h2 class="display-6 mb-3" id="hoverMenuLabel">Multi-Level Hover Menu</h2>
-                <p class="muted">Hover over the items to reveal nested sub-menus. Click a terminal item to select it.
-                </p>
-
-                <nav class="navbar navbar-expand-lg navbar-light bg-light border rounded">
-                  <div class="container-fluid">
-                    <div class="collapse navbar-collapse">
-                      <ul class="navbar-nav"> -->
-        <!--Main Menu Drop Down 1-->
-        <!-- <li class="nav-item dropdown dropdown-hover">
-                          <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="mainMenu1" role="button"
-                            aria-expanded="false">
-                            Main Menu 1
-                          </a>
-                          <ul class="dropdown-menu" aria-labelledby="mainMenu1">
-                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Item 1')">Item
-                                1</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectMenu('Item 2')">Item
-                                2</a></li>
-                            <li class="dropdown-divider"></li>
-                            <li class="dropdown-submenu">
-                              <a class="dropdown-item dropdown-toggle" href="javascript:void(0)">Sub Menu</a>
-                              <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:void(0)"
-                                    onclick="selectMenu('Sub Item 1')">Sub Item 1</a></li>
-                                <li class="dropdown-submenu">
-                                  <a class="dropdown-item dropdown-toggle" href="javascript:void(0)">Deep Menu</a>
-                                  <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="javascript:void(0)"
-                                        onclick="selectMenu('Deep Item 1')">Deep Item 1</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)"
-                                        onclick="selectMenu('Deep Item 2')">Deep Item 2</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)"
-                                        onclick="selectMenu('Deep Item 3')">Deep Item 3</a></li>
-                                  </ul>
-                                </li>
-                                <li><a class="dropdown-item" href="javascript:void(0)"
-                                    onclick="selectMenu('Sub Item 2')">Sub Item 2</a></li>
-                              </ul>
-                            </li>
-                          </ul>
-                        </li> -->
-        <!--Main Menu Drop Down 2-->
-        <!-- <li class="nav-item dropdown dropdown-hover">
-                          <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="mainMenu2">Main Menu 2</a>
-                          <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="javascript:void(0)"
-                                onclick="selectMenu('Menu 2 Item 1')">Menu 2 Item 1</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0)"
-                                onclick="selectMenu('Menu 2 Item 2')">Menu 2 Item 2</a></li>
-                          </ul>
-                        </li> -->
-        <!-- External Links -->
-        <!-- <li class="nav-item"><a class="nav-link" href="https://www.selenium.dev/" target="_blank"
-                            id="linkSelenium">Selenium</a></li>
-                        <li class="nav-item"><a class="nav-link" href="https://playwright.dev/" target="_blank"
-                            id="linkPlaywright">Playwright</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                </nav> -->
-
-        <!-- <div class="mt-3">
-                  <span class="text-muted">Selected Item: </span>
-                  <strong id="menuSelectedValue">None</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
+       
         <div class="row">
           <div class="col-12">
             <div class="card card-slim mb-3" id="hoverMenu" role="region" aria-labelledby="hoverMenuLabel">
@@ -1289,13 +1158,13 @@
                       <div class="row mb-3">
                         <div class="col-md-6">
                           <label for="inputCountry" class="form-label">Country</label>
-                          <select id="inputCountry" class="form-select" onchange="updateStateAndPhone()">
+                          <select id="inputCountry" class="form-select" onchange="updateStateAndPhone()" name="country">
                             <option selected disabled>Choose...</option>
                           </select>
                         </div>
                         <div class="col-md-6">
                           <label for="inputState" class="form-label">State</label>
-                          <select id="inputState" class="form-select">
+                          <select id="inputState" class="form-select" name="state">
                             <option selected disabled>Choose...</option>
                           </select>
                         </div>
@@ -1303,19 +1172,94 @@
                       <div class="mb-3">
                         <label for="inputPhone" class="form-label">Phone Number</label>
                         <div class="input-group">
-                          <span class="input-group-text" id="countryCode"></span>
+                          <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="countryCodeDropdownBtn" style="min-width: 120px;">
+                              <span id="selectedCountryFlag" class="me-2"></span>
+                              <span id="selectedCountryCodeText"></span>
+                          </button>
+                          <ul class="dropdown-menu" id="countryCodeDropdownMenu">
+                              <!-- Options will be populated here -->
+                          </ul>
                           <input type="tel" class="form-control" id="inputPhone" name="phone">
                         </div>
                       </div>
 
                       <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="gridCheck">
-                        <label class="form-check-label" for="gridCheck">
-                          I agree to the terms
+                        <input type="checkbox" class="form-check-input" id="termsCheck">
+                        <label class="form-check-label" for="termsCheck">
+                          I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
                         </label>
                       </div>
                       <button type="submit" class="btn btn-primary">Register</button>
                     </form>
+                    <!-- Terms and Conditions Modal -->
+                    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p>This is a dummy terms and conditions document. By checking the box, you agree to the following terms, which are provided for demonstration purposes only.</p>
+                            <h6>1. Introduction</h6>
+                            <p>Welcome to our website. If you continue to browse and use this website, you are agreeing to comply with and be bound by the following terms and conditions of use, which together with our privacy policy govern our relationship with you in relation to this website.</p>
+                            <h6>2. Intellectual Property</h6>
+                            <p>The content of the pages of this website is for your general information and use only. It is subject to change without notice. This website contains material which is owned by or licensed to us. This material includes, but is not limited to, the design, layout, look, appearance and graphics. Reproduction is prohibited other than in accordance with the copyright notice, which forms part of these terms and conditions.</p>
+                            <h6>3. Use License</h6>
+                            <p>Permission is granted to temporarily download one copy of the materials on this website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+                            <ul>
+                              <li>modify or copy the materials;</li>
+                              <li>use the materials for any commercial purpose, or for any public display (commercial or non-commercial);</li>
+                              <li>attempt to decompile or reverse engineer any software contained on this website;</li>
+                              <li>remove any copyright or other proprietary notations from the materials; or</li>
+                              <li>transfer the materials to another person or "mirror" the materials on any other server.</li>
+                            </ul>
+                            <h6>4. Disclaimer</h6>
+                            <p>The materials on this website are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+                            <h6>5. Limitations</h6>
+                            <p>In no event shall we or our suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on our website, even if we or an authorized representative has been notified orally or in writing of the possibility of such damage.</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Verification Modal -->
+                    <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="verificationModalLabel">Verify Your Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body" id="verificationModalBody">
+                            <!-- Verification details will be injected here -->
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="editBtn" data-bs-dismiss="modal">Edit</button>
+                            <button type="button" class="btn btn-primary" id="acceptBtn">Accept</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Success Modal -->
+                    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="successModalLabel">Registration Successful</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            User registered successfully!
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <div id="registerMessage" class="alert alert-success mt-2 hidden">Registration Successful!</div>
                   </div>
                   <!-- Contact Form (Ajax) -->
@@ -1335,6 +1279,7 @@
                         <textarea class="form-control" id="contactMessage" rows="3"></textarea>
                       </div>
                       <button type="button" id="contactSubmitBtn" class="btn btn-secondary">Send Message</button>
+                      <button type="reset" class="btn btn-outline-secondary">Clear</button>
                     </form>
                     <div id="contactResult" class="mt-2 text-muted"></div>
                   </div>
@@ -1417,6 +1362,7 @@
                     <div class="mb-2">
                       <button id="openWindowBtn" class="btn btn-primary">Open Blank Window</button>
                       <button id="openInputWindow" class="btn btn-outline-primary ms-2">Open Input Window</button>
+                      <button id="openFormWindow" class="btn btn-outline-success ms-2">Open Form Tab</button>
                     </div>
                     <div class="mb-2">
                       <button id="readChildTitleBtn" class="btn btn-sm btn-info">Read Child Title</button>
@@ -1782,6 +1728,91 @@
                   <div>
                     <button id="highlightRowBtn" class="btn btn-sm btn-outline-secondary">Highlight Row 3</button>
                     <button id="getStaticBtn" class="btn btn-sm btn-outline-primary ms-2">Get Rows</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employee Office Status (Dynamic Data) -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-slim mb-3" id="employeeStatusTable" role="region" aria-labelledby="employeeStatusTableLabel">
+              <div class="card-body">
+                <h2 class="display-6 mb-3" id="employeeStatusTableLabel">Employee Office Status (Real-time)</h2>
+                
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-md-4">
+                     <input type="text" id="employeeSearch" class="form-control" placeholder="Search by ID, Name, Department...">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="visually-hidden" for="employeePageSize">Page Size</label>
+                    <select id="employeePageSize" class="form-select form-select-sm" aria-label="employee page size">
+                      <option value="5">5</option>
+                      <option value="10" selected>10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                    </select>
+                  </div>
+                  <div class="col-md-5 text-end">
+                    <div class="btn-group" role="group" aria-label="employee pagination controls">
+                      <button id="empFirstPageBtn" class="btn btn-sm btn-outline-secondary">« First</button>
+                      <button id="empPrevPageBtn" class="btn btn-sm btn-outline-secondary">‹ Prev</button>
+                      <span id="empPageIndicator" class="btn btn-sm btn-light">Page 1 / 1</span>
+                      <button id="empNextPageBtn" class="btn btn-sm btn-outline-secondary">Next ›</button>
+                      <button id="empLastPageBtn" class="btn btn-sm btn-outline-secondary">Last »</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table id="employeeTable" class="table table-bordered table-striped" data-test="employee-table">
+                    <thead>
+                      <tr>
+                        <th>Employee ID</th>
+                        <th>Employee Name</th>
+                        <th>Department</th>
+                        <th>Work Mode</th>
+                        <th>Login Time</th>
+                        <th>Logout Time</th>
+                        <th>Attendance Status</th>
+                        <th>In-Office Time</th>
+                        <th>Total Active Time</th>
+                        <th>Away From Computer Time</th>
+                        <th>Break Time</th>
+                        <th>Current Status</th>
+                        <th>Last Activity Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Rows will be populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+                <div class="mt-2 d-flex justify-content-between align-items-center">
+                  <div id="employeeTableInfo" class="small text-muted">Showing 0 items</div>
+                </div>
+                <div class="mt-3 small text-muted">
+                  <strong>Column Legend & Time Calculations:</strong>
+                  <ul class="mb-0">
+                    <li><strong>Employee ID/Name/Dept/Work Mode:</strong> Basic employee details.</li>
+                    <li><strong>Login Time:</strong> The timestamp when the employee first logged in today.</li>
+                    <li><strong>Logout Time:</strong> The timestamp when the employee logged out (empty if still active).</li>
+                    <li><strong>Attendance Status:</strong> 'Present' if logged in, otherwise 'Absent'.</li>
+                    <li><strong>In-Office Time:</strong> Calculated as <code>(Current Time - Login Time)</code>. 
+                        <br><span class="text-success fw-bold">Green:</span> ≥ 9 hours. 
+                        <span class="text-warning fw-bold">Orange:</span> > 11 hours (Overtime). 
+                        <span class="text-danger fw-bold">Red:</span> < 9 hours (only if logged out).
+                    </li>
+                    <li><strong>Total Active Time:</strong> Sum of durations spent in 'Working' and 'In Meeting' statuses. Increments real-time.</li>
+                    <li><strong>Away From Computer Time:</strong> Sum of durations spent in 'Away' status. Increments real-time.</li>
+                    <li><strong>Break Time:</strong> Sum of durations spent in 'On Break' status. Increments real-time.</li>
+                    <li><strong>Current Status:</strong> The employee's current real-time state (Working, In Meeting, On Break, Away). Updates dynamically.</li>
+                    <li><strong>Last Activity Time:</strong> The timestamp of the most recent status change or simulated activity.</li>
+                  </ul>
+                  <div class="mt-2 fst-italic">
+                    * Times are simulated and update every 10 seconds. Auto-logout may occur after 4:00 PM.
                   </div>
                 </div>
               </div>
@@ -2236,6 +2267,7 @@
             let childWindowRef = null;
             const openWindowBtn = document.getElementById('openWindowBtn');
             const openInputWindow = document.getElementById('openInputWindow');
+            const openFormWindow = document.getElementById('openFormWindow');
             const readChildTitleBtn = document.getElementById('readChildTitleBtn');
             const closeChildWindowBtn = document.getElementById('closeChildWindowBtn');
             const windowResult = document.getElementById('windowResult');
@@ -2272,6 +2304,25 @@
                   }
                 } catch (e) {
                   windowResult.textContent = 'Error opening input window';
+                }
+              });
+            }
+
+            if (openFormWindow) {
+              openFormWindow.addEventListener('click', () => {
+                const name = 'form_tab_' + Date.now();
+                try {
+                  childWindowRef = window.open('', '_blank');
+                  if (childWindowRef) {
+                    const html = '<!doctype html><html><head><meta charset="utf-8"><title>Form Tab</title><style>body{font-family:Inter,Arial,sans-serif;padding:20px;max-width:500px;margin:0 auto}input,textarea{width:100%;padding:.5rem;margin-bottom:1rem;border:1px solid #ccc;border-radius:4px}label{display:block;margin-bottom:.5rem;font-weight:600}button{padding:.5rem 1rem;background:#0d6efd;color:white;border:none;border-radius:4px;cursor:pointer}button:hover{background:#0b5ed7}</style></head><body><h2>Simple Form</h2><form onsubmit="event.preventDefault(); document.getElementById(\'result\').textContent = \'Submitted!\';"><label for="name">Name:</label><input id="name" required><label for="details">Details:</label><textarea id="details" rows="3"></textarea><button type="submit">Submit Details</button></form><div id="result" style="margin-top:1rem;color:green;font-weight:bold"></div></body></html>';
+                    childWindowRef.document.write(html);
+                    childWindowRef.document.close();
+                    windowResult.textContent = 'Form tab opened';
+                  } else {
+                    windowResult.textContent = 'Popup blocked or failed';
+                  }
+                } catch (e) {
+                  windowResult.textContent = 'Error opening form tab';
                 }
               });
             }
@@ -2594,21 +2645,57 @@
             const taskProgress = document.getElementById('taskProgress');
             const taskMessage = document.getElementById('taskMessage');
             let taskInterval = null;
+            let currentProgress = 0;
+
             if (startTaskBtn) {
               startTaskBtn.addEventListener('click', () => {
-                let p = 0; taskProgress.style.width = '0%'; taskProgress.textContent = '0%';
-                taskMessage.textContent = 'Running...';
-                if (taskInterval) clearInterval(taskInterval);
+                // If running, pause it
+                if (taskInterval) {
+                  clearInterval(taskInterval);
+                  taskInterval = null;
+                  startTaskBtn.textContent = 'Start Task';
+                  taskMessage.textContent = 'Paused';
+                  return;
+                }
+
+                // If finished, reset
+                if (currentProgress >= 100) {
+                  currentProgress = 0;
+                  taskProgress.style.width = '0%';
+                  taskProgress.textContent = '0%';
+                }
+
+                // Start or Resume
+                startTaskBtn.textContent = 'Pause Task';
+                taskMessage.textContent = currentProgress === 0 ? 'Running...' : 'Resumed...';
+
                 taskInterval = setInterval(() => {
-                  p += Math.floor(Math.random() * 8) + 4; if (p > 100) p = 100;
-                  taskProgress.style.width = p + '%'; taskProgress.textContent = p + '%';
-                  if (p >= 100) { clearInterval(taskInterval); taskInterval = null; taskMessage.textContent = 'Completed'; try { globalShowToast && globalShowToast('Task completed', 'success'); } catch (e) { } }
+                  currentProgress += Math.floor(Math.random() * 8) + 4;
+                  if (currentProgress > 100) currentProgress = 100;
+
+                  taskProgress.style.width = currentProgress + '%';
+                  taskProgress.textContent = currentProgress + '%';
+
+                  if (currentProgress >= 100) {
+                    clearInterval(taskInterval);
+                    taskInterval = null;
+                    taskMessage.textContent = 'Completed';
+                    startTaskBtn.textContent = 'Start Task';
+                    try { globalShowToast && globalShowToast('Task completed', 'success'); } catch (e) { }
+                  }
                 }, 300);
               });
             }
             if (cancelTaskBtn) {
               cancelTaskBtn.addEventListener('click', () => {
-                if (taskInterval) { clearInterval(taskInterval); taskInterval = null; taskProgress.style.width = '0%'; taskProgress.textContent = '0%'; taskMessage.textContent = 'Canceled'; try { globalShowToast && globalShowToast('Task canceled', 'info'); } catch (e) { } }
+                if (taskInterval) clearInterval(taskInterval);
+                taskInterval = null;
+                currentProgress = 0;
+                taskProgress.style.width = '0%';
+                taskProgress.textContent = '0%';
+                taskMessage.textContent = 'Canceled';
+                startTaskBtn.textContent = 'Start Task';
+                try { globalShowToast && globalShowToast('Task canceled', 'info'); } catch (e) { }
               });
             }
 
@@ -2737,6 +2824,279 @@
                 target.classList.add('btn-outline-secondary', 'dyn-edit');
               }
             });
+          })();
+
+          /* Employee Office Status Logic */
+          (function () {
+            const table = document.getElementById('employeeTable');
+            const searchInput = document.getElementById('employeeSearch');
+            // Pagination controls
+            const pageSizeSelect = document.getElementById('employeePageSize');
+            const firstPageBtn = document.getElementById('empFirstPageBtn');
+            const prevPageBtn = document.getElementById('empPrevPageBtn');
+            const nextPageBtn = document.getElementById('empNextPageBtn');
+            const lastPageBtn = document.getElementById('empLastPageBtn');
+            const pageIndicator = document.getElementById('empPageIndicator');
+            const tableInfo = document.getElementById('employeeTableInfo');
+
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+
+            // Expanded data source for 50 records
+            const firstNames = ["Rahul", "Priya", "Amit", "Sneha", "Vikram", "Anjali", "Rohan", "Kavita", "Arjun", "Meera", "Suresh", "Anita", "Deepak", "Sunita", "Raj", "Pooja", "Manish", "Divya", "Sanjay", "Neha", "Vijay", "Aarti", "Alok", "Rina", "Tarun"];
+            const lastNames = ["Sharma", "Patel", "Verma", "Gupta", "Singh", "Nair", "Das", "Reddy", "Mehta", "Iyer", "Kumar", "Rao", "Yadav", "Joshi", "Chopra", "Malhotra", "Saxena", "Bhatia", "Desai", "Jain", "Mishra", "Pandey", "Kulkarni", "Ghosh", "Datta"];
+            
+            const departments = ["Engineering", "Sales", "Marketing", "HR", "Finance", "Support", "Operations", "Legal", "Design", "Product"];
+            const workModes = ["Office", "Work From Home", "Hybrid"];
+            const statuses = ["Working", "On Break", "Away", "In Meeting"];
+            
+            // Helper to format time as 12-hour AM/PM
+            function formatTime12(date) {
+              if (!date) return '-';
+              return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+            }
+
+            // Helper to format duration (seconds -> Xh Ym Zs)
+            function formatDuration(totalSeconds) {
+              const h = Math.floor(totalSeconds / 3600);
+              const m = Math.floor((totalSeconds % 3600) / 60);
+              const s = totalSeconds % 60;
+              return `${h}h ${m}m ${s}s`;
+            }
+
+            // Generate 50 Employees
+            const employees = [];
+            for (let i = 0; i < 50; i++) {
+                const fName = firstNames[i % firstNames.length];
+                const lName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                
+                // 10% chance of being absent
+                const isAbsent = Math.random() < 0.10;
+                
+                const now = new Date();
+                let loginTime = null;
+                let initialStatus = "Absent";
+                let inOfficeStatus = "Absent";
+                let attendanceStatus = "Absent";
+                let counters = { Working: 0, "In Meeting": 0, "On Break": 0, Away: 0 };
+                let lastActivity = null;
+
+                if (!isAbsent) {
+                    // Random login time between 8:00 AM and 10:30 AM today
+                    loginTime = new Date(now);
+                    loginTime.setHours(8 + Math.floor(Math.random() * 3), Math.floor(Math.random() * 60), 0);
+                    if (loginTime > now) loginTime.setTime(now.getTime() - 1000);
+
+                    initialStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                    inOfficeStatus = "Present";
+                    attendanceStatus = "Present";
+                    lastActivity = new Date(now.getTime() - Math.floor(Math.random() * 300000));
+
+                    const totalElapsed = Math.floor((now - loginTime) / 1000);
+                    
+                    let working = Math.floor(totalElapsed * 0.7);
+                    let meeting = Math.floor(totalElapsed * 0.1);
+                    let brk = Math.floor(totalElapsed * 0.1);
+                    let away = totalElapsed - working - meeting - brk;
+                    if (away < 0) away = 0;
+                    
+                    counters = {
+                        Working: working,
+                        "In Meeting": meeting,
+                        "On Break": brk,
+                        Away: away
+                    };
+                }
+
+                employees.push({
+                    id: 100001 + i, 
+                    name: `${fName} ${lName}`,
+                    department: departments[Math.floor(Math.random() * departments.length)],
+                    workMode: workModes[Math.floor(Math.random() * workModes.length)],
+                    loginTime: loginTime,
+                    logoutTime: null,
+                    inOfficeStatus: inOfficeStatus,
+                    currentStatus: initialStatus,
+                    lastActivity: lastActivity,
+                    counters: counters,
+                    attendanceStatus: attendanceStatus
+                });
+            }
+
+            // Pagination State
+            let currentPage = 1;
+            let currentSize = 10;
+            if (pageSizeSelect) currentSize = parseInt(pageSizeSelect.value, 10) || 10;
+
+            function render() {
+              const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
+              
+              const filteredEmployees = employees.filter(emp => {
+                if (!filter) return true;
+                const searchStr = `${emp.id} ${emp.name} ${emp.department} ${emp.workMode} ${emp.attendanceStatus} ${emp.currentStatus}`.toLowerCase();
+                return searchStr.includes(filter);
+              });
+
+              // Pagination Logic
+              const totalItems = filteredEmployees.length;
+              const totalPages = Math.max(1, Math.ceil(totalItems / currentSize));
+              
+              if (currentPage > totalPages) currentPage = totalPages;
+              if (currentPage < 1) currentPage = 1;
+
+              const startIndex = (currentPage - 1) * currentSize;
+              const endIndex = Math.min(startIndex + currentSize, totalItems);
+              const pageItems = filteredEmployees.slice(startIndex, endIndex);
+
+              // Update Info & Controls
+              if (pageIndicator) pageIndicator.textContent = `Page ${currentPage} / ${totalPages}`;
+              if (tableInfo) tableInfo.textContent = `Showing ${totalItems > 0 ? startIndex + 1 : 0} — ${endIndex} of ${totalItems} items`;
+
+              if (firstPageBtn) firstPageBtn.disabled = currentPage <= 1;
+              if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+              if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
+              if (lastPageBtn) lastPageBtn.disabled = currentPage >= totalPages;
+
+              if (totalItems === 0) {
+                 tbody.innerHTML = '<tr><td colspan="13" class="text-center text-muted">No matching records found</td></tr>';
+                 return;
+              }
+
+              tbody.innerHTML = pageItems.map(emp => {
+                const activeTime = emp.counters["Working"] + emp.counters["In Meeting"];
+                const breakTime = emp.counters["On Break"];
+                const awayTime = emp.counters["Away"];
+                const inOfficeTime = activeTime + breakTime + awayTime;
+                
+                let statusClass = "text-secondary";
+                if (emp.currentStatus === "Working") statusClass = "text-success fw-bold";
+                else if (emp.currentStatus === "In Meeting") statusClass = "text-info fw-bold";
+                else if (emp.currentStatus === "On Break") statusClass = "text-warning fw-bold";
+                else if (emp.currentStatus === "Away") statusClass = "text-danger";
+                else if (emp.currentStatus === "Absent") statusClass = "text-danger fw-bold"; // Red for Absent
+                else if (emp.currentStatus === "Logged Out") statusClass = "text-muted fw-bold";
+
+                let attendanceClass = "text-success";
+                if (emp.attendanceStatus === "Absent") attendanceClass = "text-danger fw-bold";
+                
+                // In-Office Time Color Logic
+                let officeTimeClass = "";
+                if (emp.attendanceStatus !== "Absent") {
+                    const hours = inOfficeTime / 3600;
+                    if (hours > 11) {
+                        officeTimeClass = "text-warning fw-bold"; // Overtime (> 11h)
+                    } else if (hours >= 9) {
+                        officeTimeClass = "text-success fw-bold"; // Standard day (9-11h)
+                    } else if (emp.logoutTime && hours < 9) {
+                        officeTimeClass = "text-danger fw-bold"; // Undertime (< 9h AND logged out)
+                    }
+                }
+
+                return `
+                  <tr>
+                    <td>${emp.id}</td>
+                    <td>${emp.name}</td>
+                    <td>${emp.department}</td>
+                    <td>${emp.workMode}</td>
+                    <td>${formatTime12(emp.loginTime)}</td>
+                    <td>${emp.logoutTime ? formatTime12(emp.logoutTime) : '-'}</td>
+                    <td class="${attendanceClass}">${emp.attendanceStatus}</td>
+                    <td class="${officeTimeClass}">${emp.attendanceStatus === 'Absent' ? '-' : formatDuration(inOfficeTime)}</td>
+                    <td>${emp.attendanceStatus === 'Absent' ? '-' : formatDuration(activeTime)}</td>
+                    <td>${emp.attendanceStatus === 'Absent' ? '-' : formatDuration(awayTime)}</td>
+                    <td>${emp.attendanceStatus === 'Absent' ? '-' : formatDuration(breakTime)}</td>
+                    <td class="${statusClass}">${emp.currentStatus}</td>
+                    <td>${formatTime12(emp.lastActivity)}</td>
+                  </tr>
+                `;
+              }).join('');
+            }
+
+            // Event Listeners
+            if (searchInput) {
+                searchInput.addEventListener('input', () => { currentPage = 1; render(); });
+            }
+            if (pageSizeSelect) {
+                pageSizeSelect.addEventListener('change', (e) => {
+                    currentSize = parseInt(e.target.value, 10);
+                    currentPage = 1;
+                    render();
+                });
+            }
+            if (firstPageBtn) firstPageBtn.addEventListener('click', () => { currentPage = 1; render(); });
+            if (prevPageBtn) prevPageBtn.addEventListener('click', () => { currentPage--; render(); });
+            if (nextPageBtn) nextPageBtn.addEventListener('click', () => { currentPage++; render(); });
+            if (lastPageBtn) lastPageBtn.addEventListener('click', () => { 
+                const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                const totalFiltered = employees.filter(emp => {
+                    if (!filter) return true;
+                    return `${emp.id} ${emp.name} ${emp.department}`.toLowerCase().includes(filter); // simplified filter check for count
+                }).length; 
+                currentPage = Math.ceil(totalFiltered / currentSize); 
+                render(); 
+            });
+
+
+            // Real-time update loop
+            let lastUpdate = Date.now();
+            setInterval(() => {
+              const nowObj = new Date();
+              const now = nowObj.getTime();
+              const deltaSeconds = Math.floor((now - lastUpdate) / 1000);
+              lastUpdate = now;
+              
+              const currentHour = nowObj.getHours();
+
+              employees.forEach(emp => {
+                // Skip absent employees
+                if (emp.attendanceStatus === "Absent") return;
+
+                // Auto-logout check (after 4 PM)
+                // Logic: 
+                // 1. Keep some employees logged in for testing (e.g., ID ends in 0 or 5).
+                // 2. For the rest, stagger logout between 4:00 PM and later with a low probability per tick.
+                // 3. ABSENT employees cannot logout (double-check).
+                if (currentHour >= 16 && !emp.logoutTime && emp.inOfficeStatus === "Present" && emp.attendanceStatus !== "Absent") {
+                   const isTestUser = (emp.id % 5 === 0); // Keep ~20% of users logged in
+                   
+                   if (!isTestUser) {
+                       // 1.5% chance per 10s tick -> approx 10% per minute -> majority out in ~20-30 mins
+                       if (Math.random() < 0.015) { 
+                           emp.logoutTime = new Date();
+                           emp.currentStatus = "Logged Out";
+                       }
+                   }
+                }
+
+                if (emp.inOfficeStatus === "Present" && !emp.logoutTime) {
+                  if (emp.counters[emp.currentStatus] !== undefined) {
+                    emp.counters[emp.currentStatus] += deltaSeconds;
+                  }
+                  
+                  if (Math.random() < 0.4) { 
+                    const r = Math.random();
+                    let newStatus;
+                    if (r < 0.6) newStatus = "Working"; 
+                    else if (r < 0.75) newStatus = "In Meeting";
+                    else if (r < 0.9) newStatus = "Away";
+                    else newStatus = "On Break";
+
+                    if (newStatus !== emp.currentStatus) {
+                      emp.currentStatus = newStatus;
+                      emp.lastActivity = new Date();
+                    }
+                  }
+                  if ((emp.currentStatus === "Working" || emp.currentStatus === "In Meeting") && Math.random() < 0.8) {
+                     emp.lastActivity = new Date();
+                  }
+                }
+              });
+
+              render();
+            }, 10000); 
+
+            // Initial render
+            render();
           })();
 
           // Country Search Dropdown
@@ -3319,6 +3679,43 @@
         </script>
         <script>
           const countryData = {
+            "United States": {
+              states: [
+                "California", "Texas", "Florida", "New York", "Illinois", "Pennsylvania",
+                "Ohio", "Georgia", "North Carolina", "Michigan", "New Jersey", "Virginia",
+                "Washington", "Arizona", "Massachusetts"
+              ],
+              code: "+1",
+              iso: "US"
+            },
+            "China": {
+              states: [
+                "Beijing", "Shanghai", "Guangdong", "Zhejiang", "Jiangsu", "Shandong",
+                "Henan", "Hebei", "Hunan", "Fujian", "Sichuan", "Anhui",
+                "Hubei", "Jiangxi", "Yunnan"
+              ],
+              code: "+86",
+              iso: "CN"
+            },
+            "Japan": {
+              states: [
+                "Tokyo", "Kanagawa", "Osaka", "Aichi", "Hokkaido", "Fukuoka",
+                "Chiba", "Saitama", "Hyogo", "Kyoto", "Hiroshima",
+                "Miyagi", "Niigata", "Nagano", "Okinawa"
+              ],
+              code: "+81",
+              iso: "JP"
+            },
+            "Germany": {
+              states: [
+                "Bavaria", "Baden-Württemberg", "North Rhine-Westphalia", "Hesse",
+                "Lower Saxony", "Saxony", "Berlin", "Hamburg", "Brandenburg", "Thuringia",
+                "Saxony-Anhalt", "Rhineland-Palatinate", "Saarland",
+                "Bremen", "Mecklenburg-Vorpommern"
+              ],
+              code: "+49",
+              iso: "DE"
+            },
             "India": {
               states: [
                 "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
@@ -3330,18 +3727,9 @@
                 "Dadra and Nagar Haveli and Daman and Diu", "Delhi",
                 "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
               ],
-              code: "+91"
+              code: "+91",
+              iso: "IN"
             },
-
-            "United States": {
-              states: [
-                "California", "Texas", "Florida", "New York", "Illinois", "Pennsylvania",
-                "Ohio", "Georgia", "North Carolina", "Michigan", "New Jersey", "Virginia",
-                "Washington", "Arizona", "Massachusetts"
-              ],
-              code: "+1"
-            },
-
             "United Kingdom": {
               states: [
                 "England", "Scotland", "Wales", "Northern Ireland",
@@ -3349,40 +3737,9 @@
                 "Merseyside", "West Yorkshire", "South Yorkshire",
                 "Kent", "Surrey", "Essex", "Lancashire", "Devon"
               ],
-              code: "+44"
+              code: "+44",
+              iso: "GB"
             },
-
-            "Canada": {
-              states: [
-                "Ontario", "Quebec", "British Columbia", "Alberta", "Manitoba",
-                "Saskatchewan", "Nova Scotia", "New Brunswick",
-                "Newfoundland and Labrador", "Prince Edward Island",
-                "Northwest Territories", "Yukon", "Nunavut",
-                "Vancouver Island", "Interior British Columbia"
-              ],
-              code: "+1"
-            },
-
-            "Australia": {
-              states: [
-                "New South Wales", "Victoria", "Queensland", "Western Australia",
-                "South Australia", "Tasmania", "Northern Territory",
-                "Australian Capital Territory", "Hunter Region", "Illawarra",
-                "Central Coast", "Gold Coast", "Sunshine Coast", "Pilbara", "Kimberley"
-              ],
-              code: "+61"
-            },
-
-            "Germany": {
-              states: [
-                "Bavaria", "Baden-Württemberg", "North Rhine-Westphalia", "Hesse",
-                "Lower Saxony", "Saxony", "Berlin", "Hamburg", "Brandenburg", "Thuringia",
-                "Saxony-Anhalt", "Rhineland-Palatinate", "Saarland",
-                "Bremen", "Mecklenburg-Vorpommern"
-              ],
-              code: "+49"
-            },
-
             "France": {
               states: [
                 "Île-de-France", "Provence-Alpes-Côte d’Azur", "Occitanie",
@@ -3391,113 +3748,38 @@
                 "Centre-Val de Loire", "Corsica",
                 "Bourgogne-Franche-Comté", "Martinique", "Guadeloupe"
               ],
-              code: "+33"
+              code: "+33",
+              iso: "FR"
             },
-
-            "Japan": {
-              states: [
-                "Tokyo", "Kanagawa", "Osaka", "Aichi", "Hokkaido", "Fukuoka",
-                "Chiba", "Saitama", "Hyogo", "Kyoto", "Hiroshima",
-                "Miyagi", "Niigata", "Nagano", "Okinawa"
-              ],
-              code: "+81"
-            },
-
-            "China": {
-              states: [
-                "Beijing", "Shanghai", "Guangdong", "Zhejiang", "Jiangsu", "Shandong",
-                "Henan", "Hebei", "Hunan", "Fujian", "Sichuan",
-                "Anhui", "Hubei", "Jiangxi", "Yunnan"
-              ],
-              code: "+86"
-            },
-
-            "Brazil": {
-              states: [
-                "São Paulo", "Rio de Janeiro", "Minas Gerais", "Bahia", "Paraná",
-                "Rio Grande do Sul", "Santa Catarina", "Pernambuco",
-                "Ceará", "Pará", "Goiás", "Maranhão",
-                "Espírito Santo", "Paraíba", "Amazonas"
-              ],
-              code: "+55"
-            },
-
-            "Mexico": {
-              states: [
-                "Mexico City", "Jalisco", "Nuevo León", "Puebla", "Guanajuato",
-                "Chihuahua", "Baja California", "Sonora", "Sinaloa",
-                "Coahuila", "Querétaro", "Yucatán",
-                "Michoacán", "Tamaulipas", "Veracruz"
-              ],
-              code: "+52"
-            },
-
             "Italy": {
               states: [
                 "Lombardy", "Lazio", "Campania", "Sicily", "Veneto", "Emilia-Romagna",
                 "Tuscany", "Piedmont", "Apulia", "Calabria", "Liguria",
                 "Marche", "Umbria", "Sardinia", "Trentino-Alto Adige"
               ],
-              code: "+39"
+              code: "+39",
+              iso: "IT"
             },
-
-            "Spain": {
+            "Canada": {
               states: [
-                "Madrid", "Catalonia", "Andalusia", "Valencia", "Galicia",
-                "Castile and León", "Basque Country", "Canary Islands",
-                "Murcia", "Aragon", "Asturias", "Balearic Islands",
-                "Cantabria", "Navarre", "La Rioja"
+                "Ontario", "Quebec", "British Columbia", "Alberta", "Manitoba",
+                "Saskatchewan", "Nova Scotia", "New Brunswick",
+                "Newfoundland and Labrador", "Prince Edward Island",
+                "Northwest Territories", "Yukon", "Nunavut",
+                "Vancouver Island", "Interior British Columbia"
               ],
-              code: "+34"
+              code: "+1",
+              iso: "CA"
             },
-
-            "Netherlands": {
+            "Brazil": {
               states: [
-                "North Holland", "South Holland", "Utrecht", "Gelderland", "Overijssel",
-                "Flevoland", "Friesland", "Groningen", "Drenthe", "North Brabant",
-                "Limburg", "Zeeland", "Haarlem", "Leiden", "Amersfoort"
+                "São Paulo", "Rio de Janeiro", "Minas Gerais", "Bahia", "Paraná",
+                "Rio Grande do Sul", "Santa Catarina", "Pernambuco", "Ceará",
+                "Pará", "Goiás", "Maranhão", "Espírito Santo", "Paraíba", "Amazonas"
               ],
-              code: "+31"
+              code: "+55",
+              iso: "BR"
             },
-
-            "South Africa": {
-              states: [
-                "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape", "Free State",
-                "Limpopo", "Mpumalanga", "North West", "Northern Cape",
-                "Cape Town Metro", "Johannesburg Metro", "Tshwane Metro",
-                "Ekurhuleni", "Buffalo City", "Nelson Mandela Bay"
-              ],
-              code: "+27"
-            },
-
-            "Singapore": {
-              states: [
-                "Central Region", "East Region", "North Region", "North-East Region", "West Region",
-                "Downtown Core", "Orchard", "Marina Bay", "Jurong", "Woodlands",
-                "Tampines", "Punggol", "Ang Mo Kio", "Toa Payoh", "Yishun"
-              ],
-              code: "+65"
-            },
-
-            "United Arab Emirates": {
-              states: [
-                "Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Fujairah",
-                "Ras Al Khaimah", "Umm Al Quwain", "Al Ain", "Jebel Ali",
-                "Deira", "Business Bay", "Dubai Marina", "Palm Jumeirah",
-                "Yas Island", "Khalifa City"
-              ],
-              code: "+971"
-            },
-
-            "Saudi Arabia": {
-              states: [
-                "Riyadh", "Makkah", "Madinah", "Eastern Province", "Asir", "Tabuk",
-                "Hail", "Najran", "Jazan", "Al-Qassim", "Al-Jouf",
-                "Northern Borders", "Jeddah", "Mecca Metro", "Taif"
-              ],
-              code: "+966"
-            },
-
             "Russia": {
               states: [
                 "Moscow", "Saint Petersburg", "Moscow Oblast", "Krasnodar Krai",
@@ -3505,55 +3787,358 @@
                 "Rostov", "Samara", "Novosibirsk", "Omsk",
                 "Irkutsk", "Primorsky Krai", "Khabarovsk Krai"
               ],
-              code: "+7"
+              code: "+7",
+              iso: "RU"
             },
-
             "South Korea": {
               states: [
                 "Seoul", "Busan", "Incheon", "Daegu", "Daejeon", "Gwangju", "Ulsan",
                 "Gyeonggi", "Gangwon", "North Chungcheong", "South Chungcheong",
                 "North Jeolla", "South Jeolla", "North Gyeongsang", "South Gyeongsang"
               ],
-              code: "+82"
+              code: "+82",
+              iso: "KR"
+            },
+            "Australia": {
+              states: [
+                "New South Wales", "Victoria", "Queensland", "Western Australia",
+                "South Australia", "Tasmania", "Northern Territory",
+                "Australian Capital Territory", "Hunter Region", "Illawarra",
+                "Central Coast", "Gold Coast", "Sunshine Coast", "Pilbara", "Kimberley"
+              ],
+              code: "+61",
+              iso: "AU"
+            },
+            "Spain": {
+              states: [
+                "Madrid", "Catalonia", "Andalusia", "Valencia", "Galicia",
+                "Castile and León", "Basque Country", "Canary Islands",
+                "Murcia", "Aragon", "Asturias", "Balearic Islands",
+                "Cantabria", "Navarre", "La Rioja"
+              ],
+              code: "+34",
+              iso: "ES"
+            },
+            "Mexico": {
+              states: [
+                "Mexico City", "Jalisco", "Nuevo León", "Puebla", "Guanajuato",
+                "Chihuahua", "Baja California", "Sonora", "Sinaloa",
+                "Coahuila", "Querétaro", "Yucatán", "Michoacán", "Tamaulipas", "Veracruz"
+              ],
+              code: "+52",
+              iso: "MX"
+            },
+            "Indonesia": {
+              states: [
+                "Jakarta", "West Java", "Central Java", "East Java", "Banten",
+                "Bali", "West Sumatra", "North Sumatra", "South Sumatra",
+                "Riau", "Lampung", "Kalimantan", "Sulawesi", "Papua", "Maluku"
+              ],
+              code: "+62",
+              iso: "ID"
+            },
+            "Netherlands": {
+              states: [
+                "North Holland", "South Holland", "Utrecht", "Gelderland", "Overijssel",
+                "Flevoland", "Friesland", "Groningen", "Drenthe", "North Brabant",
+                "Limburg", "Zeeland", "Haarlem", "Leiden", "Amersfoort"
+              ],
+              code: "+31",
+              iso: "NL"
+            },
+            "Saudi Arabia": {
+              states: [
+                "Riyadh", "Makkah", "Madinah", "Eastern Province", "Asir", "Tabuk",
+                "Hail", "Najran", "Jazan", "Al-Qassim", "Al-Jouf",
+                "Northern Borders", "Jeddah", "Mecca Metro", "Taif"
+              ],
+              code: "+966",
+              iso: "SA"
+            },
+            "Turkey": {
+              states: [
+                "Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Adana",
+                "Konya", "Gaziantep", "Mersin", "Kayseri", "Eskisehir",
+                "Samsun", "Trabzon", "Diyarbakir", "Van"
+              ],
+              code: "+90",
+              iso: "TR"
+            },
+            "Switzerland": {
+              states: [
+                "Zurich", "Bern", "Geneva", "Basel", "Vaud", "Aargau",
+                "Lucerne", "St. Gallen", "Ticino", "Valais",
+                "Fribourg", "Solothurn", "Schwyz", "Zug", "Graubünden"
+              ],
+              code: "+41",
+              iso: "CH"
+            },
+            "Poland": {
+              states: [
+                "Masovian", "Silesian", "Greater Poland", "Lesser Poland",
+                "Lower Silesian", "Łódź", "Pomeranian", "West Pomeranian",
+                "Kuyavian-Pomeranian", "Podlaskie", "Lublin", "Lubusz",
+                "Opole", "Warmian-Masurian", "Świętokrzyskie"
+              ],
+              code: "+48",
+              iso: "PL"
+            },
+            "Thailand": {
+              states: [
+                "Bangkok", "Chiang Mai", "Chiang Rai", "Phuket", "Krabi",
+                "Chonburi", "Rayong", "Ayutthaya", "Khon Kaen",
+                "Udon Thani", "Surat Thani", "Songkhla", "Trang", "Nakhon Ratchasima", "Lampang"
+              ],
+              code: "+66",
+              iso: "TH"
+            },
+            "Belgium": {
+              states: [
+                "Brussels", "Flanders", "Wallonia", "Antwerp", "East Flanders",
+                "West Flanders", "Limburg", "Flemish Brabant", "Walloon Brabant",
+                "Hainaut", "Namur", "Liège", "Luxembourg", "Mechelen", "Leuven"
+              ],
+              code: "+32",
+              iso: "BE"
+            },
+            "Sweden": {
+              states: [
+                "Stockholm", "Västra Götaland", "Skåne", "Uppsala", "Östergötland",
+                "Jönköping", "Halland", "Örebro", "Västmanland", "Dalarna",
+                "Gävleborg", "Västerbotten", "Norrbotten", "Kalmar", "Kronoberg"
+              ],
+              code: "+46",
+              iso: "SE"
+            },
+            "Norway": {
+              states: [
+                "Oslo", "Viken", "Vestland", "Rogaland", "Trøndelag",
+                "Nordland", "Troms", "Finnmark", "Agder", "Innlandet",
+                "Buskerud", "Telemark", "Vestfold", "Akershus", "Møre og Romsdal"
+              ],
+              code: "+47",
+              iso: "NO"
+            },
+            "Austria": {
+              states: [
+                "Vienna", "Lower Austria", "Upper Austria", "Styria", "Tyrol",
+                "Salzburg", "Carinthia", "Vorarlberg", "Burgenland",
+                "Graz", "Linz", "Innsbruck", "Klagenfurt", "Bregenz", "Wels"
+              ],
+              code: "+43",
+              iso: "AT"
+            },
+            "Iran": {
+              states: [
+                "Tehran", "Isfahan", "Fars", "Khuzestan", "East Azerbaijan",
+                "West Azerbaijan", "Khorasan Razavi", "Kerman", "Mazandaran",
+                "Gilan", "Yazd", "Hormozgan", "Qom", "Alborz", "Ilam"
+              ],
+              code: "+98",
+              iso: "IR"
+            },
+            "United Arab Emirates": {
+              states: [
+                "Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Fujairah",
+                "Ras Al Khaimah", "Umm Al Quwain", "Al Ain", "Jebel Ali",
+                "Deira", "Business Bay", "Dubai Marina", "Palm Jumeirah",
+                "Yas Island", "Khalifa City"
+              ],
+              code: "+971",
+              iso: "AE"
+            },
+            "Nigeria": {
+              states: [
+                "Lagos", "Abuja", "Rivers", "Oyo", "Kaduna", "Kano",
+                "Ogun", "Ondo", "Osun", "Anambra", "Enugu",
+                "Delta", "Edo", "Akwa Ibom", "Cross River"
+              ],
+              code: "+234",
+              iso: "NG"
+            },
+            "Argentina": {
+              states: [
+                "Buenos Aires", "Córdoba", "Santa Fe", "Mendoza", "Tucumán",
+                "Entre Ríos", "Salta", "Jujuy", "Chaco", "Corrientes",
+                "Misiones", "San Juan", "San Luis", "Neuquén", "Río Negro"
+              ],
+              code: "+54",
+              iso: "AR"
+            },
+            "South Africa": {
+              states: [
+                "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape", "Free State",
+                "Limpopo", "Mpumalanga", "North West", "Northern Cape",
+                "Cape Town Metro", "Johannesburg Metro", "Tshwane Metro",
+                "Ekurhuleni", "Buffalo City", "Nelson Mandela Bay"
+              ],
+              code: "+27",
+              iso: "ZA"
             }
           };
 
+          const countrySelect = document.getElementById('inputCountry');
+          const stateSelect = document.getElementById('inputState');
+          const countryCodeBtn = document.getElementById('countryCodeDropdownBtn');
+          const selectedFlag = document.getElementById('selectedCountryFlag');
+          const selectedCodeText = document.getElementById('selectedCountryCodeText');
+          const countryCodeMenu = document.getElementById('countryCodeDropdownMenu');
+          const phoneInput = document.getElementById('inputPhone');
 
+          function populateCountries() {
+              countrySelect.innerHTML = '<option value="" selected disabled>Choose...</option>';
+              const sortedCountries = Object.keys(countryData).sort();
+              sortedCountries.forEach(country => {
+                  const option = document.createElement('option');
+                  option.value = country;
+                  option.textContent = country;
+                  countrySelect.appendChild(option);
+              });
+          }
 
-          const countrySelect = document.getElementById("inputCountry");
-          const stateSelect = document.getElementById("inputState");
-          const countryCode = document.getElementById("countryCode");
+          function populateCountryCodes() {
+              countryCodeMenu.innerHTML = '';
+              const sortedCountries = Object.keys(countryData).sort();
 
-          for (const country in countryData) {
-            const option = document.createElement("option");
-            option.value = country;
-            option.text = country;
-            countrySelect.add(option);
+              sortedCountries.forEach(country => {
+                  const countryInfo = countryData[country];
+                  if (!countryInfo || !countryInfo.iso) return;
+                  const isoCode = countryInfo.iso.toLowerCase();
+
+                  const li = document.createElement('li');
+                  const a = document.createElement('a');
+                  a.classList.add('dropdown-item', 'd-flex', 'align-items-center');
+                  a.href = '#';
+                  a.innerHTML = `<img src="https://flagcdn.com/16x12/${isoCode}.png" class="me-2" alt="${country} flag"> ${country} (${countryInfo.code})`;
+
+                  a.addEventListener('click', (e) => {
+                      e.preventDefault();
+                      setCountryCode(country);
+                      if (countrySelect.value !== country) {
+                          countrySelect.value = country;
+                          updateStateAndPhone();
+                      }
+                  });
+                  li.appendChild(a);
+                  countryCodeMenu.appendChild(li);
+              });
+          }
+
+          function setCountryCode(country) {
+              const countryInfo = countryData[country];
+              if (!countryInfo || !countryInfo.iso) return;
+              const isoCode = countryInfo.iso.toLowerCase();
+
+              selectedFlag.innerHTML = `<img src="https://flagcdn.com/16x12/${isoCode}.png" alt="${country} flag">`;
+              selectedCodeText.textContent = countryInfo.code;
           }
 
           function updateStateAndPhone() {
-            const selectedCountry = countrySelect.value;
-
-            // Clear previous state options
-            stateSelect.innerHTML = '<option selected disabled>Choose...</option>';
-
-            if (selectedCountry && countryData[selectedCountry]) {
+              const selectedCountry = countrySelect.value;
               const countryInfo = countryData[selectedCountry];
 
-              // Populate states
-              countryInfo.states.forEach(state => {
-                const option = document.createElement("option");
-                option.value = state;
-                option.text = state;
-                stateSelect.add(option);
+              stateSelect.innerHTML = '<option selected disabled>Choose...</option>';
+              if (countryInfo && countryInfo.states) {
+                  countryInfo.states.forEach(state => {
+                      const option = document.createElement('option');
+                      option.value = state;
+                      option.textContent = state;
+                      stateSelect.appendChild(option);
+                  });
+                  stateSelect.disabled = false;
+              } else {
+                  stateSelect.disabled = true;
+              }
+
+              if (countryInfo) {
+                  setCountryCode(selectedCountry);
+              }
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              populateCountries();
+              populateCountryCodes();
+
+              // Initial state for state dropdown and phone code
+              stateSelect.innerHTML = '<option selected disabled>Choose...</option>';
+              stateSelect.disabled = true;
+              if (selectedFlag) selectedFlag.innerHTML = '';
+              if (selectedCodeText) selectedCodeText.textContent = '';
+              
+              countrySelect.addEventListener('change', updateStateAndPhone);
+          });
+
+          // Registration Form Verification Logic
+          document.addEventListener('DOMContentLoaded', () => {
+            const registerForm = document.getElementById('registerForm');
+            const verificationModalEl = document.getElementById('verificationModal');
+            const successModalEl = document.getElementById('successModal');
+            const acceptBtn = document.getElementById('acceptBtn');
+            const verifyBody = document.getElementById('verificationModalBody');
+
+            if (registerForm && verificationModalEl && successModalEl && acceptBtn && verifyBody) {
+              const verifyModal = new bootstrap.Modal(verificationModalEl);
+              const successModal = new bootstrap.Modal(successModalEl);
+
+              registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Check terms
+                const termsCheck = document.getElementById('termsCheck');
+                if (termsCheck && !termsCheck.checked) {
+                    alert('Please agree to the Terms and Conditions.');
+                    return;
+                }
+
+                const formData = new FormData(registerForm);
+                let html = '<dl class="row mb-0">';
+                
+                const labels = {
+                    firstname: 'First Name',
+                    lastname: 'Last Name',
+                    gender: 'Gender',
+                    country: 'Country',
+                    state: 'State',
+                    phone: 'Phone Number'
+                };
+
+                for (const [key, value] of formData.entries()) {
+                    const label = labels[key] || key;
+                    let displayValue = value;
+                    
+                    if (key === 'phone') {
+                        const code = document.getElementById('selectedCountryCodeText');
+                        if (code && code.textContent) {
+                            displayValue = `${code.textContent} ${value}`;
+                        }
+                    }
+
+                    html += `<dt class="col-sm-4">${label}</dt><dd class="col-sm-8">${displayValue}</dd>`;
+                }
+                html += '</dl>';
+                
+                verifyBody.innerHTML = html;
+                verifyModal.show();
               });
 
-              // Update country code
-              countryCode.textContent = countryInfo.code;
-            } else {
-              countryCode.textContent = "";
+              acceptBtn.addEventListener('click', () => {
+                verifyModal.hide();
+                successModal.show();
+                // Reset form
+                registerForm.reset();
+                // Reset manual fields
+                const stateSelect = document.getElementById('inputState');
+                const flag = document.getElementById('selectedCountryFlag');
+                const code = document.getElementById('selectedCountryCodeText');
+                if(stateSelect) {
+                    stateSelect.innerHTML = '<option selected disabled>Choose...</option>';
+                    stateSelect.disabled = true;
+                }
+                if(flag) flag.innerHTML = '';
+                if(code) code.textContent = '';
+              });
             }
-          }
+          });
         </script>
 
 </body>
